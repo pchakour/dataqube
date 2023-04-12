@@ -1,0 +1,2 @@
+class UnknownPluginName < StandardError
+end

@@ -1,0 +1,344 @@
+autostop:
+  enabled: true
+  timeout: 2
+
+inputs:
+  - type: tail
+    # path: /home/hawk/development/dataqube/dataqube-parser/test2.log
+    path: /home/hawk/development/dataqube/dataqube-parser/test.log
+    tag: loc_tag
+
+outputs:
+  # - type: stdout
+  # - type: dataqube
+  - type: elasticsearch
+    scheme: https
+    user: admin
+    password: admin
+    cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
+
+rules:
+  - tag: EXTRACT_PATTERNS
+    extract:
+      - type: pattern_thales
+        source: message
+        target: pattern
+      
+  - tag: EXTRACT_DATE
+    extract:
+      - type: timestamp_thales
+        source: message
+        target: "@timestamp"
+    assert:
+      - type: empty
+        source: "@timestamp"
+        expected: failure
+
+  - tag: EXTRACT_LOG_LEVEL
+    extract:
+      - type: log_level_thales
+        source: message
+        target: log.level
+    assert:
+      - type: empty
+        source: log.level
+        expected: failure
+
+  - tag: EXTRACT_LANGUAGES
+    extract:
+      - type: languages_thales
+        source: message
+        target: languages
+    assert:
+      - type: size
+        source: "[languages][summary]"
+        max: 2
+        min: 1
+      - type: contains
+        when: record['languages']['summary'].size > 1
+        source: "[languages][summary]"
+        value: technical
+
+  # - tag: HEADER
+  #   description: Header extraction
+  #   severity: blocker
+  #   extract:
+  #     - type: grok
+  #       source: message
+  #       pattern: "^%{TIMESTAMP_ISO8601:[@metadata][date]} \\\\| %{SPACE}%{LOGLEVEL:[log][level]}%{SPACE} \\\\| %{SPACE}%{DATA:[process][name]}(\\\\[%{NUMBER:[process][pid]:int}\\\\])?(\\\\[%{NUMBER:[process][thread][id]:int}\\\\])?%{SPACE} \\\\| %{SPACE}%{WORD:[log][type]}%{SPACE}( \\\\| %{SPACE}\\\\[%{DATA:[@metadata][optional_metadata]}\\\\]%{SPACE})? \\\\| %{GREEDYDATA:[@metadata][functional_data]}$"
+  #   transform:
+  #     - type: date
+  #       source: "[@metadata][date]"
+  #       format: iso8601
+
+  # - tag: METADATA
+  #   when: 
+  #     predicate: record['@metadata'] && record['@metadata']['optional_metadata']
+  #   transform:
+  #     - type: list
+  #       source: "[@metadata][optional_metadata]"
+
+  # - tag: METRICS_PARAM_ALERTING
+  #   when:
+  #     predicate: record['log'] && (record['log']['type'] == 'METRICS' or record['log']['type'] == 'PARAM' or record['log']['type'] == 'ALERTING')
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "%{DATA:description}?%{SPACE}\\\\[%{GREEDYDATA:[@metadata][key_value_list]}\\\\]$"
+  #   transform:
+  #     - type: list
+  #       source: "[@metadata][key_value_list]"
+
+  # - tag: SEQUENCE_REQUEST
+  #   when:
+  #     predicate: record['log'] && record['log']['type'] == 'SEQUENCE'
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "^%{GREEDYDATA:[sequence][source]} => %{GREEDYDATA:[sequence][dest]}%{SPACE}:%{SPACE}%{WORD:[sequence][function]}\\\\(%{DATA:[sequence][params]}\\\\)( \\\\: %{GREEDYDATA:[sequence][response]})?"
+  #   transform:
+  #     - type: list
+  #       source: "[sequence][params]"
+  #       target: "[sequence][params]"
+
+  # - tag: SEQUENCE_RESPONSE
+  #   when:
+  #     predicate: record['log'] && record['log']['type'] == 'SEQUENCE' && !record['_dataqube.tags'].include?('SEQUENCE_REQUEST')
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "^Response received%{SPACE}: %{GREEDYDATA:[sequence][response]}"
+  #   transform:
+  #     - type: list
+  #       source: "[sequence][response]"
+  #       target: "[sequence][response]"
+
+  # - tag: SEQUENCE_JOIN
+  #   when: 
+  #     predicate: record['_dataqube.tags'] && (['SEQUENCE_REQUEST', 'SEQUENCE_RESPONSE'] - record['_dataqube.tags']).length == 1
+  #   transform:
+  #     - type: join
+  #       when: record['event.id']
+  #       by: "'sequence_' + record['event.id'].to_s"
+  #       from:
+  #         rule_tag: SEQUENCE_REQUEST
+  #       until:
+  #         # predicate
+  #         # elapsed_time
+  #         rule_tag: SEQUENCE_RESPONSE
+  #       using:
+  #         - when:
+  #           # predicate
+  #             rule_tag: SEQUENCE_REQUEST
+  #           code: |-
+  #             map['sequence'] = record['sequence']  
+  #         - when:
+  #           # predicate
+  #             rule_tag: SEQUENCE_RESPONSE
+  #           code: |-
+  #             map['sequence']['response'] = record['sequence']['response']
+  #             _source = map['sequence']['source']
+  #             _dest = map['sequence']['dest']
+  #             map['sequence']['source'] = _dest
+  #             map['sequence']['dest'] = _source
+  #             map['sequence']['function'] = map['sequence']['function'] + '_response'
+  #             record['sequence'] = map['sequence']
+
+  # - tag: STATE_CHANGE
+  #   when:
+  #     predicate: record['log'] && record['log']['type'] == 'STATE'
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "(%{NOTSPACE:[state][previous]} (at %{TIMESTAMP_ISO8601:[state][previous_state_date]} )?=> )?%{NOTSPACE:[state][new]}( \\\\[%{GREEDYDATA:[state][params]}\\\\])?"
+  #   transform:
+  #     - type: list
+  #       source: "[state][params]"
+  #       target: "[state][params]"
+  #     - type: date
+  #       source: "[state][previous_state_date]"
+  #       target: "[state][previous_state_date]"
+  #       format: iso8601
+  #       when: record.key?('state') && record['state'].key?('previous_state_date')
+
+  # - tag: TOPOLOGY_LINK
+  #   when:
+  #     predicate: record['log'] && record['log']['type'] == 'TOPOLOGY'
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "^Link %{DATA:[topology][src]} -> (\\\\[)?%{DATA:[topology][dest]}(\\\\])?( \\\\[%{GREEDYDATA:[@metadata][topology_params]}\\\\])?$"
+  #   transform:
+  #     - type: list
+  #       source: "[topology][dest]"
+  #       target: "[topology][dest]"
+  #     - type: list
+  #       source: "[@metadata][topology_params]"
+  #       target: topology
+  #       overwrite: true
+  #     - type: split # Limitation only one by tag and at the end of the transform section
+  #       source: "[topology][dest]"
+
+  # - tag: TOPOLOGY_LINKS
+  #   when:
+  #     predicate: record['log'] && record['log']['type'] == 'TOPOLOGY' && !record['_dataqube.tags'].include?('TOPOLOGY_LINK')
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "Links \\\\[%{GREEDYDATA:topology}\\\\]$"
+  #   transform:
+  #     - type: list
+  #       source: topology
+  #       target: topology
+  #     - type: uuid
+  #       target: event.id
+  #       when: "!record.key?('event.id')"
+  #     - type: split
+  #       source: [topology, "[topology][dest]"]
+
+  # - tag: MESSAGE
+  #   when:
+  #     predicate: record['log'] && record['log']['type'] == 'MESSAGE'
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern:
+  #         - "^Send message \\\\[%{GREEDYDATA:[@metadata][data]}\\\\]$"
+  #         - "^Receive message \\\\[%{GREEDYDATA:[@metadata][data]}\\\\]$"
+  #   transform:
+  #     - type: list
+  #       source: "[@metadata][data]"
+  #       target: payload
+
+  # - tag: OTHER
+  #   when:
+  #     predicate: record['log'] && record['log']['type'] == 'OTHER' && record['log']['level'] == 'ERROR'
+  #   transform:
+  #     - type: add_field
+  #       name: error
+  #       value: '%{[@metadata][functional_data]}'
+  
+  # - tag: STACKTRACE_START
+  #   when:
+  #     predicate: "record['@metadata'] && record['@metadata']['functional_data'] == 'Start stack trace'"
+
+  # - tag: STACKTRACE_END
+  #   when:
+  #     predicate: "record['@metadata'] && record['@metadata']['functional_data'] == 'End stack trace'"
+
+  # - tag: STACKTRACE_JOIN
+  #   when: 
+  #     predicate: "!record['_dataqube.tags'] || (record['_dataqube.tags'].include?('STACKTRACE_START') || record['_dataqube.tags'].include?('STACKTRACE_END'))"
+  #   transform:
+  #     - type: join
+  #       by: "'stacktrace'"
+  #       from:
+  #         rule_tag: STACKTRACE_START
+  #       until:
+  #         rule_tag: STACKTRACE_END
+  #       using:
+  #         - when:
+  #             rule_tag: STACKTRACE_START
+  #           code: |-
+  #             map['stacktrace'] = ''
+  #         - when:
+  #             predicate: "!record['_dataqube.tags'].include?('STACKTRACE_START') && !record['_dataqube.tags'].include?('STACKTRACE_END')"
+  #           code: |-
+  #             map['stacktrace'] += '\n' + record['message']
+  #         - when:
+  #             rule_tag: STACKTRACE_END
+  #           code: |-
+  #             record['stacktrace'] = map['stacktrace']
+  #             map['stacktrace'] = nil
+
+  # - tag: OTHER_DATA
+  #   when:
+  #     predicate: "!record['_dataqube.tags'] && record[@metadata] && record[@metadata][functional_data]"
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "\\\\[%{GREEDYDATA:[@metadata][data]}\\\\]"
+  #   transform:
+  #     - type: list
+  #       source: "[@metadata][data]"
+
+  # - tag: SPREAD_EVENT_START
+  #   when: 
+  #     predicate: record.key?('spread.id')
+  #   extract:
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "Start spread event( \\\\[%{DATA:[@metadata][spread_data]}\\\\])?$"
+  #   transform:
+  #     - type: list
+  #       source: "[@metadata][spread_data]"
+  #       target: 'spread'
+  #     - type: add_field
+  #       name: "[spread][name]"
+  #       value: generic_spread
+
+  # - tag: SPREAD_EVENT_END
+  #   when: 
+  #     predicate: record.key?('spread.id') && !record['_dataqube.tags'].include?('SPREAD_EVENT_START')
+  #   extract: 
+  #     - type: grok
+  #       source: "[@metadata][functional_data]"
+  #       pattern: "End spread event( \\\\[%{DATA:[@metadata][spread_data]}\\\\])?$"
+  #   transform:
+  #     - type: list
+  #       source: "[@metadata][spread_data]"
+  #       target: 'spread'
+
+  # - tag: SPREAD_EVENT_DATA
+  #   when: 
+  #     predicate: record.key?('spread.id') && !record['_dataqube.tags'].include?('SPREAD_EVENT_START') && !record['_dataqube.tags'].include?('SPREAD_EVENT_END')
+
+  # - tag: SPREAD_JOIN
+  #   when: 
+  #     predicate: record['_dataqube.tags'] && (record['_dataqube.tags'].include?('SPREAD_EVENT_START') || record['_dataqube.tags'].include?('SPREAD_EVENT_DATA') || record['_dataqube.tags'].include?('SPREAD_EVENT_END'))
+  #   transform:
+  #     - type: join
+  #       by: "'spread_' + record['spread.id'].to_s"
+  #       from:
+  #         rule_tag: SPREAD_EVENT_START
+  #       until:
+  #         rule_tag: SPREAD_EVENT_END
+  #       using:
+  #         - when:
+  #             rule_tag: SPREAD_EVENT_START
+  #           code: |-
+  #             map['name'] = record['spread']['name']
+  #             map['aggregated'] = {}
+  #             map['aggregated']['_memoize_'] = {}
+  #         - when:
+  #             rule_tag: SPREAD_EVENT_DATA
+  #           code: |-
+  #             map['aggregated'] = map['aggregated'].merge(record.to_hash){ |key, oldval, newval|
+  #                 if (key != '_memoize_')
+  #                     if (oldval != newval)
+  #                         unless map['aggregated']['_memoize_'].key?(key)
+  #                             map['aggregated']['_memoize_'][key] = true
+  #                             map['aggregated'][key] = Array.new
+  #                             map['aggregated'][key].push(oldval)
+  #                         end
+  #                         map['aggregated'][key].push(newval)
+  #                     else
+  #                         map['aggregated'][key] = newval
+  #                     end
+  #                 end
+  #             }
+  #         - when:
+  #             rule_tag: SPREAD_EVENT_END
+  #           code: |-
+  #             map['aggregated'].delete('tags')
+  #             map['aggregated'].delete('@timestamp')
+  #             map['aggregated'].delete('@version')
+  #             map['aggregated'].delete('path')
+  #             map['aggregated'].delete('log')
+  #             map['aggregated'].delete('host')
+  #             map['aggregated'].delete('spread.id')
+  #             map['aggregated'].delete('@metadata')
+  #             map['aggregated'].delete('process')
+  #             map['aggregated'].delete('_dataqube.quality')
+  #             map['aggregated'].delete('_memoize_')
+  #             record['spread'] = map

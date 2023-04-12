@@ -1,0 +1,6 @@
+.ignore
+**/node_modules
+dataqube-parser/fluentd
+dataqube-parser/test*
+dataqube-parser/fluentd.conf
+**/*_thales

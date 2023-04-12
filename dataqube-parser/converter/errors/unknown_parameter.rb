@@ -1,0 +1,2 @@
+class UnknownParameter < StandardError
+end

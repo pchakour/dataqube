@@ -1,0 +1,2 @@
+class BadParameterType < StandardError
+end
