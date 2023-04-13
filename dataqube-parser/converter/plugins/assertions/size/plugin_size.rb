@@ -19,12 +19,12 @@ class Size < Dataqube::Assertion
       if #{record(params[:source])}.kind_of?(Array)
         if '#{params[:expected]}' == 'success'
           quality!(record)
-            .rule('#{rule_tag}', 'Fields #{params[:source].to_s} size must be between or equal to #{params[:min]} and #{params[:max]}')
+            .rule('#{rule_tag}', '#{params[:message] || "Fields #{params[:source].to_s} size must be between or equal to #{params[:min]} and #{params[:max]}"}')
             .expect(#{record(params[:source])}.size)
             .toBeBetweenOrEqual(#{params[:min]}, #{params[:max]})
         else
           quality!(record)
-            .rule('#{rule_tag}', 'Fields #{params[:source].to_s} size must be between or equal to #{params[:min]} and #{params[:max]}')
+            .rule('#{rule_tag}', '#{params[:message] || "Fields #{params[:source].to_s} size must be between or equal to #{params[:min]} and #{params[:max]}"}')
             .expect(#{record(params[:source])}.size)
             .not
             .toBeBetweenOrEqual(#{params[:min]}, #{params[:max]})

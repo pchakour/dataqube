@@ -132,9 +132,7 @@ class FluentdConvertor
     conversion = ""
     if rule["extract"]
       rule["extract"].each do |extractor|
-        extractor_conversion = %{
-          record.delete('_dataqube.quality')
-        }
+        extractor_conversion = ''
         extractor_conversion << get_plugin_each(rule["tag"], @extractors_loader, extractor)
         if extractor[:when]
           extractor_conversion = whap_with_when(extractor[:when], extractor_conversion)
@@ -142,7 +140,7 @@ class FluentdConvertor
         conversion << extractor_conversion
       end
       conversion << %{
-        if !record.key?('_dataqube.quality')
+        if !record.key?('_dataqube.quality') || !record['_dataqube.quality'].any? { |stamp| stamp[:tag] == '#{rule['tag']}' }
           if !record.key?('_dataqube.tags')
             record['_dataqube.tags'] = []
           end

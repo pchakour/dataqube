@@ -4,7 +4,7 @@ module Dataqube
     attr_reader :name
     attr_writer :logger
     config_param :tag, :string, { multi: true, default: nil }
-    config_param :when, :string, { default: nil }
+    config_param :when, :string, default: nil
 
     def initialize(plugin_type, name)
       @name = name

@@ -40,7 +40,13 @@ def get_plugin_config(type, plugin)
     parameters = []
   end
   common_parameters = $config_param_register['common/plugin']
-  return common_parameters + parameters
+  type_parameters = []
+
+  if $config_param_register["common/#{type}"]
+    type_parameters = $config_param_register["common/#{type}"]
+  end
+
+  return common_parameters + parameters + type_parameters
 end
 
 def get_type(var)

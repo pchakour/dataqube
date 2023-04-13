@@ -18,44 +18,48 @@ outputs:
     cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
 
 rules:
-  - tag: EXTRACT_PATTERNS
+  - tag: PATTERN
     extract:
       - type: pattern_thales
         source: message
         target: pattern
       
-  - tag: EXTRACT_DATE
+  - tag: DATE
     extract:
       - type: timestamp_thales
         source: message
         target: "@timestamp"
     assert:
       - type: empty
+        message: No properly formated date found
         source: "@timestamp"
         expected: failure
 
-  - tag: EXTRACT_LOG_LEVEL
+  - tag: LOG_LEVEL
     extract:
       - type: log_level_thales
         source: message
         target: log.level
     assert:
       - type: empty
+        message: No log level found
         source: log.level
         expected: failure
 
-  - tag: EXTRACT_LANGUAGES
+  - tag: LANGUAGE
     extract:
       - type: languages_thales
         source: message
         target: languages
     assert:
       - type: size
+        message: Too many languages detected in this log
         source: "[languages][summary]"
         max: 2
         min: 1
       - type: contains
         when: record['languages']['summary'].size > 1
+        message: Too many languages detected in this log
         source: "[languages][summary]"
         value: technical
 
