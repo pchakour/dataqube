@@ -37,7 +37,8 @@ rules:
 
   - tag: LOG_LEVEL
     extract:
-      - type: log_level_thales
+      - type: grok
+        pattern: '%{LOG_LEVEL:[log][level]}'
         source: message
         target: log.level
     assert:

@@ -1,6 +1,6 @@
 class Expector
   attr_reader :not
-  def initialize(value, record, rescue_error, rule_tag, rule_message)
+  def initialize(value, record, rescue_error, rule_tag = :unknown, rule_message)
     @value = value
     @record = record
     @rescue_error = rescue_error
@@ -29,7 +29,7 @@ class Expector
     if (@not)
       error = !error
     end
-
+    
     if (error)
       @expected = args.to_s
       stamp()
@@ -118,16 +118,23 @@ class Expector
 
   private
   def stamp()
-    @record['_dataqube.quality'] = {}
+    if !@record['_dataqube.quality']
+      @record['_dataqube.quality'] = []
+    end
+
+    
+    quality_stamp = {}
+
     if @rule_tag
-      @record['_dataqube.quality']['rule_tag'] = @rule_tag
+      quality_stamp[:tag] = @rule_tag
     end
 
     if @rule_message
-      @record['_dataqube.quality']['rule_message'] = @rule_message
+      quality_stamp[:message] = @rule_message
     end
-  
-    @record['_dataqube.quality']['expected'] = @not ? "!#{@expected.to_s}" : @expected.to_s
-    @record['_dataqube.quality']['value'] = "#{@value.to_s}"
+    
+    quality_stamp[:expected] = @not ? "!#{@expected.to_s}" : @expected.to_s
+    quality_stamp[:value] = "#{@value.to_s}"
+    @record['_dataqube.quality'].push(quality_stamp)
   end
 end

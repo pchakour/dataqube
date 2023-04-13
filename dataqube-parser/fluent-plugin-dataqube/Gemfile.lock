@@ -1,13 +1,17 @@
+PATH
+  remote: ../../dataqube-ruby
+  specs:
+    dataqube-ruby (0.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
-    execjs (2.8.1)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  execjs (= 2.8.1)
+  dataqube-ruby!
 
 BUNDLED WITH
    2.3.5
