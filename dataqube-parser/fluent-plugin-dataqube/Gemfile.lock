@@ -1,7 +1,7 @@
 PATH
   remote: ../../dataqube-ruby
   specs:
-    dataqube-ruby (0.0.0)
+    dataqube-ruby (0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -14,4 +14,4 @@ DEPENDENCIES
   dataqube-ruby!
 
 BUNDLED WITH
-   2.3.5
+   2.4.12

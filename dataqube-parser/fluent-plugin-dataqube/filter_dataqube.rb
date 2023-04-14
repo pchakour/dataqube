@@ -1,5 +1,5 @@
 require 'fluent/plugin/filter'
-require 'dataqube-ruby/main'
+require 'dataqube-ruby/lib/main'
 
 module Fluent::Plugin
   class DataqubeFilter < Filter
