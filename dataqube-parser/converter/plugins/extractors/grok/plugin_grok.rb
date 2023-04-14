@@ -51,9 +51,9 @@ class Grok < Dataqube::Extractor
 
   def rule_description(params)
     if params[:expected] == "failure"
-      return "The source #{params["source"]} must not match one of following pattern: #{params[:pattern].to_s.gsub('"', "\\\\\\\\'")}"
+      return "The source #{params[:source]} must not match one of following pattern: #{params[:pattern].to_s.gsub('"', "\\\\\\\\'")}"
     elsif params[:expected] == "success"
-      return "The source #{params["source"]} must match one of following patterns: #{params[:pattern].to_s.gsub('"', "\\\\\\\\'")}"
+      return "The source #{params[:source]} must match one of following patterns: #{params[:pattern].to_s.gsub('"', "\\\\\\\\'")}"
     end
   end
 end

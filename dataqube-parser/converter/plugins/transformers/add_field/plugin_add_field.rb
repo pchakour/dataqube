@@ -14,7 +14,7 @@ class AddField < Dataqube::Transformer
 
   def each(rule_tag, params)
     %{
-      #{record(params[:name])} = '#{value(params[:value])}'
+      #{record(params[:name])} = #{value(params[:value])}
     }
   end
 end

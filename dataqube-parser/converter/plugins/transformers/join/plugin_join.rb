@@ -28,7 +28,7 @@ class Join < Dataqube::Transformer
     using_list = params[:using]
 
     conversion = %{
-      if #{get_condition(from_rule_tag, from_predicate)} && (#{key})
+      if #{get_condition(from_rule_tag, from_predicate)}
         @map[#{key}] = {}
       end
 
@@ -40,14 +40,14 @@ class Join < Dataqube::Transformer
       using_when_predicate = item['when']['predicate']
       using_code = item['code']
       conversion << %{
-        if #{get_condition(using_when_tag, using_when_predicate)} && map
+        if #{get_condition(using_when_tag, using_when_predicate)} && map != nil
           #{using_code}
         end
       }
     }
 
     conversion << %{
-      if #{get_condition(until_rule_tag, until_predicate)} && (#{key})
+      if #{get_condition(until_rule_tag, until_predicate)}
         @map.delete(#{key})
       end
     }
