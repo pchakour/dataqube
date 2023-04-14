@@ -1,4 +1,5 @@
 require_relative './grok_parser'
+require_relative '../../lib/parser/parser_error_wrapper'
 
 $grok_parser = GrokParser.new()
 $grok_parser.configure()

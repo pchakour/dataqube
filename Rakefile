@@ -41,12 +41,10 @@ task :configure_fluentd do
 
   Bundler.with_unbundled_env do
     Dir.chdir(dataqube_ruby_folder) do
-      `gem build dataqube-ruby.gemspec`
+      `gem build dataqube-ruby.gemspec -o dataqube-ruby.gem`
+      `gem install dataqube-ruby.gem --install-dir #{fluentd_folder}`
     end
   end
-
-  dataqube_plugin_dest = File.join fluentd_plugins_folder, 'dataqube'
-  Dir.mkdir dataqube_plugin_dest
 
   Bundler.with_unbundled_env do
     Dir.chdir(dataqube_plugin_folder) do
@@ -54,7 +52,7 @@ task :configure_fluentd do
       `bundle install`
     end
   end
-  FileUtils.cp_r dataqube_plugin_folder, dataqube_plugin_dest
+  FileUtils.cp_r dataqube_plugin_folder, fluentd_plugins_folder
   FileUtils.cp_r autoshutdown_plugin_folder, fluentd_plugins_folder
 end
 

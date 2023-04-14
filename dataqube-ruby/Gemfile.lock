@@ -1,5 +1,5 @@
 PATH
-  remote: ../../dataqube-ruby
+  remote: .
   specs:
     dataqube-ruby (0.0.1)
 

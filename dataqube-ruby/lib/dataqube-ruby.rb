@@ -1,9 +1,8 @@
-require_relative 'lib/utils'
-require_relative 'lib/parser/parser_wrapper'
-require_relative 'lib/quality/quality'
+require_relative 'utils'
+require_relative 'quality/quality'
 
 def configure_ruby()
-  Dir.glob(File.dirname(__FILE__) + '/plugins/*').each do |plugin_directory|
+  Dir.glob(File.dirname(__FILE__) + '/../plugins/*').each do |plugin_directory|
     plugin_entry = plugin_directory + '/' + File.basename(plugin_directory) + '.rb';
     puts "require #{plugin_entry}"
     require plugin_entry

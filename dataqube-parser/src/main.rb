@@ -80,9 +80,9 @@ pid = Process.spawn(
   "-c",
   output_path,
   "-p",
-  "#{fluentd_dir}/plugins/dataqube",
+  "#{fluentd_dir}/plugins/fluent-plugin-dataqube",
   "-p",
-  "./fluentd/plugins/fluent-plugin-autoshutdown"
+  "#{fluentd_dir}/plugins/fluent-plugin-autoshutdown"
 )
 
 Signal.trap("INT") do
