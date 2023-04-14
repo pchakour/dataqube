@@ -81,7 +81,7 @@ class FluentdConvertor
   }"
   code "${
     begin
-      #{rule['when'] ? wrap_with_when(rule['when'], each_rule) : each_rule}
+      #{rule['when'] ? wrap_with_when(rule['when']['predicate'], each_rule) : each_rule}
     rescue => e
       puts 'Error when excuting each code of rule #{rule['tag']} tags=' + record['_dataqube.tags'].to_s
       raise e
@@ -97,7 +97,7 @@ class FluentdConvertor
 
   private
 
-  def whap_with_when(predicate, text)
+  def wrap_with_when(predicate, text)
     %{
       if #{predicate}
         #{text}
@@ -135,7 +135,7 @@ class FluentdConvertor
         extractor_conversion = ''
         extractor_conversion << get_plugin_each(rule["tag"], @extractors_loader, extractor)
         if extractor[:when]
-          extractor_conversion = whap_with_when(extractor[:when], extractor_conversion)
+          extractor_conversion = wrap_with_when(extractor[:when], extractor_conversion)
         end
         conversion << extractor_conversion
       end
@@ -162,7 +162,7 @@ class FluentdConvertor
       rule["transform"].each do |transformer|
         transformer_conversion = get_plugin_each(rule["tag"], @transformers_loader, transformer)
         if transformer[:when]
-          transformer_conversion = whap_with_when(transformer[:when], transformer_conversion)
+          transformer_conversion = wrap_with_when(transformer[:when], transformer_conversion)
         end
         conversion << transformer_conversion
       end
@@ -172,7 +172,7 @@ class FluentdConvertor
       rule["assert"].each do |assertion|
         assertion_conversion = get_plugin_each(rule["tag"], @assertions_loader, assertion)
         if assertion[:when]
-          assertion_conversion = whap_with_when(assertion[:when], assertion_conversion)
+          assertion_conversion = wrap_with_when(assertion[:when], assertion_conversion)
         end
         conversion << assertion_conversion
       end
