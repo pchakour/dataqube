@@ -2,8 +2,10 @@ require_relative '../../../core/extractor'
 
 class Grok < Dataqube::Extractor
   config_param :source, :string, default: 'message'
+  config_param :target, :string, default: 'message'
   config_param :expected, :string, default: 'success'
   config_param :pattern, :string, { multi: true }
+  config_param :severity, ['info', 'major', 'minor', 'fatal'], default: 'info'
 
   def initialize()
     super("grok")
@@ -42,7 +44,7 @@ class Grok < Dataqube::Extractor
   private
 
   def quality(rule_tag, params)
-    quality_rule = "quality!(record).rule('#{rule_tag}', '#{rule_description(params)}').expect(error)"
+    quality_rule = "quality!(record).rule('#{rule_tag}', '#{params[:severity]}', '#{rule_description(params)}').expect(error)"
     if params[:expected] == "failure"
       quality_rule << ".not"
     end

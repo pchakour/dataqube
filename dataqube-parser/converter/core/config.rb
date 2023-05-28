@@ -6,17 +6,17 @@ class Config
   def initialize()
   end
 
-  def start(config_path, project, rules)
+  def start(config_path, injection_id, rules)
     load(config_path)
 
-    if !project.nil?
+    if !injection_id.nil?
       if !rules.nil?
         @content['rules'] = rules
       end
 
       dataqube_output = @content['outputs'].find {|output| output['type'] == 'dataqube'}
       dataqube_output['type'] = 'elasticsearch'
-      dataqube_output['index'] = "data-#{project['id']}"
+      dataqube_output['index'] = "data-#{injection_id}"
     end
   end
 

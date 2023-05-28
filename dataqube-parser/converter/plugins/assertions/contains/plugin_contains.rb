@@ -18,12 +18,12 @@ class Contains < Dataqube::Assertion
       if #{record(params[:source])}.kind_of?(Array)
         if '#{params[:expected]}' == 'success'
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:message] || "Field #{params[:source].to_s} must contain #{value(params[:value]).gsub("'", "\\\\\\\\'")}"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Field #{params[:source].to_s} must contain #{value(params[:value]).gsub("'", "\\\\\\\\'")}"}')
             .expect(#{record(params[:source])})
             .toContain(#{value(params[:value])})
         else
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:message] || "Field #{params[:source].to_s} must not contain #{value(params[:value]).gsub("'", "\\\\\\\\'")}"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Field #{params[:source].to_s} must not contain #{value(params[:value]).gsub("'", "\\\\\\\\'")}"}')
             .expect(#{record(params[:source])})
             .not
             .toContain(#{value(params[:value])})

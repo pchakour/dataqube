@@ -22,12 +22,12 @@ class Eq < Dataqube::Assertion
       sources.each do |field|
         if '#{params[:expected]}' == 'success'
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:message] || "Fields #{params[:source].to_s} not matching \'#{params[:value]}\'"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} not matching \'#{params[:value]}\'"}')
             .expect(record[field])
             .toBe('#{params[:value]}')
         else
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:message] || "Fields #{params[:source].to_s} match \'#{params[:value]}\'"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} match \'#{params[:value]}\'"}')
             .expect(record[field])
             .not
             .toBe('#{params[:value]}')

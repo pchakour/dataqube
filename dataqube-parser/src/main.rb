@@ -23,6 +23,10 @@ OptionParser.new do |opts|
   opts.on("--project-id=[ID]", "Project id") do |projectId|
     options[:projectId] = projectId
   end
+
+  opts.on("--project-version=[VERSION]", "Project version (default: last)") do |projectVersion|
+    options[:projectVersion] = projectVersion
+  end
 end.parse!
 
 core = Core.new()
@@ -50,25 +54,26 @@ end
 
 raise OptionParser::MissingArgument if options[:config].nil?
 options[:parser] = 'fluentd' if options[:parser].nil?
+options[:projectVersion] = 'last' if options[:projectVersion].nil?
 
 rules = nil
 project = nil
+injection_id = nil
 
 if !options[:projectId].nil?
   # Dataqube mode
   dataqube = Dataqube::Api.new
-  project = dataqube.get_project(options[:projectId]);
-  rules_response = dataqube.get_rules(project['rules']);
+  project = dataqube.get_project(options[:projectId])
+  rules_response = dataqube.get_rules(project['rules'])
 
   if rules_response
     rules = YAML.load(rules_response['rules'])['rules']
+    injection_id = dataqube.begin_injection(project['id'], options[:projectVersion])
   end
-
-
 end
 
 config_path = Pathname.new(options[:config]).realpath.to_s
-conversion = core.convert(config_path, project, rules)
+conversion = core.convert(config_path, injection_id, rules)
 output_path = "#{File.dirname(__FILE__)}/../#{options[:parser]}.conf"
 File.open(output_path, 'w') { |file| file.write(conversion) }
 fluentd_dir = "#{File.dirname(__FILE__)}/../fluentd"
@@ -93,3 +98,13 @@ Signal.trap("INT") do
 end
 
 Process.wait(pid)
+
+print "Injection #{injection_id} done";
+if injection_id
+  exit_status = $?
+  status = 'done'
+  if !exit_status.success?
+    status = 'error'
+  end
+  dataqube.end_injection(injection_id, status);
+end

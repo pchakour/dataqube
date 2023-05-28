@@ -29,6 +29,11 @@ task :install => [:clean] do
     end
   end
 
+  puts 'Installing fluentd plugins'
+  Dir.chdir(fluentd_folder) do
+    `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch --install-dir #{fluentd_folder}`
+  end
+
   puts 'Removing temp files'.blue
   FileUtils.rm_rf(fluentd_src_folder)
   Rake::Task[:configure_fluentd].invoke

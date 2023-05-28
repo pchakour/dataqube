@@ -1,11 +1,14 @@
+require 'securerandom'
+
 class Expector
   attr_reader :not
-  def initialize(value, record, rescue_error, rule_tag = :unknown, rule_message)
+  def initialize(value, record, rescue_error, rule_tag = :unknown, rule_message, severity)
     @value = value
     @record = record
     @rescue_error = rescue_error
     @rule_tag = rule_tag
     @rule_message = rule_message
+    @severity = severity
     @not = false
   end
 
@@ -133,8 +136,14 @@ class Expector
       quality_stamp[:message] = @rule_message
     end
     
+    if @severity
+      quality_stamp[:severity] = @severity
+    end
+
     quality_stamp[:expected] = @not ? "!#{@expected.to_s}" : @expected.to_s
     quality_stamp[:value] = "#{@value.to_s}"
+    quality_stamp[:status] = "unresolved"
+    quality_stamp[:id] = SecureRandom.uuid
     @record['_dataqube.quality'].push(quality_stamp)
   end
 end

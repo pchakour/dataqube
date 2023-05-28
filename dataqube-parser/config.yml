@@ -4,41 +4,42 @@ autostop:
 
 inputs:
   - type: tail
-    # path: /home/hawk/development/dataqube/dataqube-parser/test2.log
+    #path: /home/hawk/development/dataqube/dataqube-parser/test2.log
     path: /home/hawk/development/dataqube/dataqube-parser/test.log
     tag: loc_tag
 
 outputs:
   # - type: stdout
-  # - type: dataqube
-  - type: elasticsearch
-    scheme: https
-    user: admin
-    password: admin
-    cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
+  - type: dataqube
+  # - type: elasticsearch
+  #   scheme: https
+  #   user: admin
+  #   password: admin
+  #   cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
 
 rules:
-  - tag: PATTERN
-    extract:
-      - type: pattern_thales
-        source: message
-        target: pattern
+  # - tag: PATTERN
+  #   extract:
+  #     - type: pattern_thales
+  #       source: message
+  #       target: pattern
       
-  - tag: DATE
-    extract:
-      - type: timestamp_thales
-        source: message
-        target: "@timestamp"
-    assert:
-      - type: empty
-        message: No properly formated date found
-        source: "@timestamp"
-        expected: failure
+  # - tag: DATE
+  #   extract:
+  #     - type: timestamp_thales
+  #       source: message
+  #       target: "@timestamp"
+  #   assert:
+  #     - type: empty
+  #       message: No properly formated date found
+  #       source: "@timestamp"
+  #       expected: failure
+  #       severity: fatal
 
   - tag: LOG_LEVEL
     extract:
       - type: grok
-        pattern: '%{LOG_LEVEL:[log][level]}'
+        pattern: '%{LOGLEVEL:[log][level]}'
         source: message
         target: log.level
     assert:
@@ -46,27 +47,30 @@ rules:
         message: No log level found
         source: log.level
         expected: failure
+        severity: major
 
-  - tag: LANGUAGE
-    extract:
-      - type: languages_thales
-        source: message
-        target: languages
-    assert:
-      - type: size
-        message: Too many languages detected in this log
-        source: "[languages][summary]"
-        max: 2
-        min: 1
-      - type: contains
-        when: record['languages']['summary'].size > 1
-        message: Too many languages detected in this log
-        source: "[languages][summary]"
-        value: technical
+  # - tag: LANGUAGE
+  #   extract:
+  #     - type: languages_thales
+  #       source: message
+  #       target: languages
+  #   assert:
+  #     - type: size
+  #       message: Too many languages detected in this log
+  #       source: "[languages][summary]"
+  #       max: 2
+  #       min: 1
+  #       severity: minor
+  #     - type: contains
+  #       when: record['languages']['summary'].size > 1
+  #       message: Too many languages detected in this log
+  #       source: "[languages][summary]"
+  #       value: technical
+  #       severity: minor
 
   # - tag: HEADER
   #   description: Header extraction
-  #   severity: blocker
+  #   severity: fatal
   #   extract:
   #     - type: grok
   #       source: message

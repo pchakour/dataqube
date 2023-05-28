@@ -29,8 +29,8 @@ class Core
     @assertions_loader.start()
   end
   
-  def convert(config_path, project, rules)
-    @config.start(config_path, project, rules)
+  def convert(config_path, injection_id, rules)
+    @config.start(config_path, injection_id, rules)
     config_validate_and_apply_defaults(@config)
     convertor_engine = FluentdConvertor.new(
       @inputs_loader,

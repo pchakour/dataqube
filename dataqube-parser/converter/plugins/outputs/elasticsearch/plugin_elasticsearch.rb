@@ -1,7 +1,7 @@
 require_relative '../../../core/output'
 
 class Elasticsearch < Dataqube::Output
-  desc "Scheme of e"
+  desc "Scheme could be http or https"
   config_param :scheme, ['http', 'https'], default: 'http'
   config_param :host, :string, default: 'localhost'
   config_param :port, :integer, default: 9200

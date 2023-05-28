@@ -21,12 +21,12 @@ class Empty < Dataqube::Assertion
       sources.each do |field|
         if '#{params[:expected]}' == 'success'
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:message] || "Fields #{params[:source].to_s} are not empty"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} are not empty"}')
             .expect(record[field])
             .toBeOneOf('', nil)
         else
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:message] || "Fields #{params[:source].to_s} are empty"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} are empty"}')
             .expect(record[field])
             .not
             .toBeOneOf('', nil)
