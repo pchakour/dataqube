@@ -49,6 +49,7 @@ if options[:doc]
       puts ""
     end
   end
+  print  $config_param_register.to_json
   exit
 end
 
