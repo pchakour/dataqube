@@ -20,14 +20,8 @@ task :install => [:clean] do
   Git.clone FLUENT_GIT_URL, fluentd_src_folder
 
   puts 'Running bundler'.blue
-  Bundler.with_unbundled_env do
-    Dir.chdir(fluentd_src_folder) do
-      `bundle config set --local path #{fluentd_folder}`
-      `bundle install`
-      `bundle exec rake build`
-      `gem install pkg/$(ls ./pkg) --install-dir #{fluentd_folder}`
-    end
-  end
+  pid = Process.spawn(`bundle config set --local path #{fluentd_folder} && bundle install && bundle exec rake build && gem install pkg/$(ls ./pkg) --install-dir #{fluentd_folder}`, chdir: fluentd_src_folder);
+  Process.wait(pid);
 
   puts 'Installing fluentd plugins'
   Dir.chdir(fluentd_folder) do
