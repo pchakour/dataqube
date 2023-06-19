@@ -31,6 +31,8 @@ task :install,[:fluent_elasticsearch_version] => [:clean] do |t, args|
   end
 
   puts 'Installing fluentd plugins'
+  puts "GEM_PATH='#{fluentd_folder}' bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_version} --install-dir #{fluentd_folder}"
+  
   Bundler.with_unbundled_env do
     Dir.chdir(fluentd_folder) do
       `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_version} --install-dir #{fluentd_folder}`
