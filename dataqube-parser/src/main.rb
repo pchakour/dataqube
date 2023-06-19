@@ -100,7 +100,7 @@ end
 
 Process.wait(pid)
 
-print "Injection #{injection_id} done";
+print "Injection #{injection_id} done\n";
 if injection_id
   exit_status = $?
   status = 'done'

@@ -12,8 +12,9 @@ dataqube_plugin_folder = File.join dataqube_parser_folder, 'fluent-plugin-dataqu
 autoshutdown_plugin_folder = File.join dataqube_parser_folder, 'fluent-plugin-autoshutdown'
 
 desc "Install all dependencies"
-task :install => [:clean] do
+task :install,[:fluent_elasticsearch_version] => [:clean] do
   puts 'Running installation'.green
+  fluent_elasticsearch_version = args[:fluent_elasticsearch_version] || "5.3.0"
   fluentd_src_folder = File.join(current_folder, 'fluentd-src')
   Dir.mkdir(fluentd_folder)
   puts 'Cloning fluentd parser'.blue
@@ -32,7 +33,7 @@ task :install => [:clean] do
   puts 'Installing fluentd plugins'
   Bundler.with_unbundled_env do
     Dir.chdir(fluentd_folder) do
-      `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch --install-dir #{fluentd_folder}`
+      `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_version} --install-dir #{fluentd_folder}`
     end
   end
 
