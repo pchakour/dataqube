@@ -32,12 +32,12 @@ task :install,[:fluent_elasticsearch_version] => [:clean] do |t, args|
 
   puts 'Installing fluentd plugins'
   puts "GEM_PATH='#{fluentd_folder}' bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_version} --install-dir #{fluentd_folder}"
-  
-  Bundler.with_unbundled_env do
-    Dir.chdir(fluentd_folder) do
-      `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_version} --install-dir #{fluentd_folder}`
-    end
-  end
+
+  # Bundler.with_unbundled_env do
+  #   Dir.chdir(fluentd_folder) do
+  #     `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_version} --install-dir #{fluentd_folder}`
+  #   end
+  # end
 
   puts 'Removing temp files'.blue
   FileUtils.rm_rf(fluentd_src_folder)
