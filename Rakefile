@@ -12,7 +12,7 @@ dataqube_plugin_folder = File.join dataqube_parser_folder, 'fluent-plugin-dataqu
 autoshutdown_plugin_folder = File.join dataqube_parser_folder, 'fluent-plugin-autoshutdown'
 
 desc "Install all dependencies"
-task :install,[:fluent_elasticsearch_version] => [:clean] do
+task :install,[:fluent_elasticsearch_version] => [:clean] do |t, args|
   puts 'Running installation'.green
   fluent_elasticsearch_version = args[:fluent_elasticsearch_version] || "5.3.0"
   fluentd_src_folder = File.join(current_folder, 'fluentd-src')
