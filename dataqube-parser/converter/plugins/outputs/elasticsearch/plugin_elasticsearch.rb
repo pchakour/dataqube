@@ -22,8 +22,7 @@ class Elasticsearch < Dataqube::Output
         scheme #{params[:scheme]}
         host #{params[:host]}
         port #{params[:port]}
-        logstash_format true
-        logstash_prefix #{params[:index]}
+        index_name #{params[:index]}
         user #{params[:user]}
         password #{params[:password]}
         ca_file #{params[:cacert]}
