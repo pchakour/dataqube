@@ -14,6 +14,17 @@ class FluentdConvertor
       conversion << convert_input(input)
     end
 
+    conversion << %{
+      <filter **>
+        @type dataqube
+        init "@map = { 'count' => 0 }"
+        code "${
+          @map['count']++
+          puts @map['count']
+        }"
+      </filter>
+    }
+
     config.content["rules"].each do |rule|
       conversion << convert_rule(rule)
     end
@@ -37,12 +48,13 @@ class FluentdConvertor
 
     if config.content.key?('autostop') && config.content['autostop']['enabled']
       conversion << "
-        <match **>
-          @type autoshutdown
-          timeout #{config.content['autostop']['timeout'] || 10}
-        </match>
+      <match **>
+        @type autoshutdown
+        timeout #{config.content['autostop']['timeout'] || 10}
+      </match>
       "
     end
+
 
     conversion
   end
