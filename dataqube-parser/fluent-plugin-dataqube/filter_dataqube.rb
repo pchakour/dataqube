@@ -20,7 +20,7 @@ module Fluent::Plugin
       configure_ruby()
       
       code = parse_multiline_code(@init)
-      self.instance_eval(code, binding)
+      eval(code, binding)
     end
 
     # def start
@@ -54,7 +54,7 @@ module Fluent::Plugin
     
     def process_record(tag, time, record)
       code = parse_multiline_code(@code)
-      self.instance_eval(code, binding, 'parser_config', 0)
+      eval(code, binding, 'parser_config', 0)
     end
     
     def parse_multiline_code(code)
