@@ -14,6 +14,22 @@ class FluentdConvertor
       conversion << convert_input(input)
     end
 
+    conversion << %{
+      <filter *>
+        @type dataqube
+        init "${
+          @map = { 'count' => 0, 'broadcasted_metric' => 0 }
+        }"
+        code "${
+          @map['count'] = @map['count'] + 1
+          if @map['count'] - @map['broadcasted_metric'] > 100
+            @map['broadcasted_metric'] = @map['count']
+            puts '{ \\\\'metrics\\\\': { \\\\'received_events\\\\': ' + @map['broadcasted_metric'].to_s + ' } }'
+          end
+        }"
+      </filter>
+    }
+
     config.content["rules"].each do |rule|
       conversion << convert_rule(rule)
     end
