@@ -26,6 +26,7 @@ class FluentdConvertor
             @map['broadcasted_metric'] = @map['count']
             puts '{ \\\\'metrics\\\\': { \\\\'received_events\\\\': ' + @map['broadcasted_metric'].to_s + ' } }'
           end
+          record
         }"
       </filter>
     }
