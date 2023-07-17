@@ -24,7 +24,7 @@ class FluentdConvertor
           @map['count'] = @map['count'] + 1
           if @map['count'] - @map['broadcasted_metric'] > 100
             @map['broadcasted_metric'] = @map['count']
-            puts '{ \\\\'metrics\\\\': { \\\\'received_events\\\\': ' + @map['broadcasted_metric'].to_s + ' } }'
+            puts '{ \\\"metrics\\\": { \\\"received_events\\\": ' + @map['broadcasted_metric'].to_s + ' } }'
           end
           record
         }"

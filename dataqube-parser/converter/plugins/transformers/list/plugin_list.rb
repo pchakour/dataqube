@@ -2,7 +2,7 @@ require_relative '../../../core/transformer'
 
 class List < Dataqube::Transformer
   config_param :source, :string, default: 'message'
-  config_param :target, :string, default: 'message'
+  config_param :target, :string, default: nil
   config_param :overwrite, :boolean, default: false
 
   def initialize()
@@ -20,9 +20,9 @@ class List < Dataqube::Transformer
     target_output = "record = merge_hash(record, list)"
     if target
       if overwrite
-        target_output = "#{record(target)} = merge_hash(#{record(target)}, list)"
-      else
         target_output = "#{record(target)} = list"
+      else
+        target_output = "#{record(target)} = merge_hash(#{record(target)}, list)"
       end
     end
 
