@@ -3,7 +3,11 @@ module Dataqube
     attr_reader :plugin_type
     attr_reader :name
     attr_writer :logger
+
+
+    desc "List of tag to add if the plugin is well executed"
     config_param :tag, :string, { multi: true, default: nil }
+    desc "Ruby predicate to indicate when execute this plugin"
     config_param :when, :string, default: nil
 
     def initialize(plugin_type, name)

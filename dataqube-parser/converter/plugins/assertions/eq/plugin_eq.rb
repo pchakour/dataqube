@@ -1,9 +1,13 @@
 require_relative '../../../core/assertion'
 
 class Eq < Dataqube::Assertion
+  plugin_desc "Check if a field value is equal to a specify value"
+  plugin_license "community"
+
+  desc "Source field to check"
   config_param :source, :string, multi: true
+  desc "Value to compare"
   config_param :value, :any
-  config_param :expected, ['failure', 'success'], default: 'success'
 
   def initialize()
     super("eq")

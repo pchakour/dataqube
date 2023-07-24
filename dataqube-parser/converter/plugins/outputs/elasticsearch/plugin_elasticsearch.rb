@@ -1,13 +1,22 @@
 require_relative '../../../core/output'
 
 class Elasticsearch < Dataqube::Output
-  desc "Scheme could be http or https"
+  plugin_desc "Output data to an Elasticsearch database"
+  plugin_license "community"
+
+  desc "Connection protocol to use, specify https if your Elasticsearch endpoint supports SSL"
   config_param :scheme, ['http', 'https'], default: 'http'
+  desc "The hostname of your Elasticsearch node"
   config_param :host, :string, default: 'localhost'
+  desc "The port number of your Elasticsearch node"
   config_param :port, :integer, default: 9200
+  desc "The index name to write events to"
   config_param :index, :string, default: 'dataqube'
+  desc "You can specify user for HTTP Basic authentication"
   config_param :user, :string, default: nil
+  desc "You can specify password for HTTP Basic authentication"
   config_param :password, :string, default: nil
+  desc "Need to verify Elasticsearch's certificate? You can use the following parameter to specify a CA"
   config_param :cacert, :string, default: nil
 
   def initialize()

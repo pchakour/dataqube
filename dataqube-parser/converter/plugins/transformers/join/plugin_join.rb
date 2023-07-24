@@ -1,11 +1,27 @@
 require_relative '../../../core/transformer'
 
 class Join < Dataqube::Transformer
-  config_param :when, :string, default: nil
+  plugin_desc "Join events"
+  plugin_license "community"
+
+  rule_tag_type = { :type => :string, :desc => 'Check if an event is tagged by the rule_tag' }
+
+  desc "Key shared between events to join. This field is a ruby instruction."
   config_param :by, :string
-  config_param :from, :hash
-  config_param :until, :hash
-  config_param :using, :hash, multi: true
+  desc "Determine the beginning of a join section"
+  config_param :from, { :rule_tag => rule_tag_type }
+  desc "Determine the end of a join section"
+  config_param :until, { :rule_tag => rule_tag_type }
+  desc "What to do to join events"
+  config_param :using, {
+    :when => {
+      :config_param => {
+        :rule_tag => rule_tag_type,
+        :code => { :type => :string, :desc => 'Ruby code to execute when conditions are met' }
+      }
+    }
+  },
+  multi: true
 
   def initialize()
     super("join")

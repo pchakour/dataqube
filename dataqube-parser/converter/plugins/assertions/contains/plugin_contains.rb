@@ -1,9 +1,13 @@
 require_relative '../../../core/assertion'
 
 class Contains < Dataqube::Assertion
+  plugin_desc "Check if an array contains a specific value"
+  plugin_license "community"
+
+  desc "Source field to check. The field must be an array."
   config_param :source, :string
+  desc "Value to find in the array"
   config_param :value, :any
-  config_param :expected, ['failure', 'success'], default: 'success'
 
   def initialize()
     super("contains")

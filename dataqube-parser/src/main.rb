@@ -8,8 +8,12 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: example.rb [options]"
   
-  opts.on("-d", "--build-doc", "Build plugin documentation") do |d|
-    options[:doc] = d
+  opts.on("", "--build-json-doc", "Build plugin documentation as json format") do |d|
+    options[:docjson] = d
+  end
+
+  opts.on("", "--build-text-doc", "Build plugin documentation as text format") do |d|
+    options[:doctext] = d
   end
 
   opts.on("-p", "--parser=[PARSER]", "Parser to use, one of [fluentd]") do |p|
@@ -32,7 +36,7 @@ end.parse!
 core = Core.new()
 core.start()
 
-if options[:doc]
+if options[:doctext]
   $config_param_register.each do |plugin, params|
     splitted = plugin.split('/')
     type = splitted[0]
@@ -49,6 +53,10 @@ if options[:doc]
       puts ""
     end
   end
+  exit
+end
+
+if options[:docjson]
   print  $config_param_register.to_json
   exit
 end

@@ -6,7 +6,13 @@ $last_description = nil
 $config_param_register = {}
 
 def plugin_name
-  caller_locations(2,1)[0].to_s.match(/(?<=<class:)(\w+)(?=>')/)[0].downcase
+  path = caller_locations(2, 1)[0].path.to_s
+  matches = path.match(/\/plugin_(\w+)\.rb/)
+  if matches
+    return matches[1]
+  end
+
+  return caller_locations(2,1)[0].to_s.match(/(?<=<class:)(\w+)(?=>')/)[0].downcase
 end
 
 def plugin_type
@@ -14,12 +20,24 @@ def plugin_type
   return plugin_type != 'converter' ? plugin_type.chop : 'common';
 end
 
-def config_param(name, type, options = nil)
-  if !$config_param_register["#{plugin_type}/#{plugin_name}"]
-    $config_param_register["#{plugin_type}/#{plugin_name}"] = []
+def plugin_config_init(type, name)
+  if !$config_param_register[type]
+    $config_param_register[type] = {}
   end
 
-  $config_param_register["#{plugin_type}/#{plugin_name}"].push({
+  if !$config_param_register[type][name]
+    $config_param_register[type][name] = {
+      'badge' => 'unknown',
+      'description' => nil,
+      'params' => []
+    }
+  end
+end
+
+def config_param(name, type, options = nil)
+  plugin_config_init(plugin_type, plugin_name)
+
+  $config_param_register[plugin_type][plugin_name]['params'].push({
     'name' => name,
     'type' => type,
     'options' => options,
@@ -33,17 +51,28 @@ def desc(description)
   $last_description = description
 end
 
+
+def plugin_desc(description)
+  plugin_config_init(plugin_type, plugin_name)
+  $config_param_register[plugin_type][plugin_name]['description'] = description
+end
+
+def plugin_license(license)
+  plugin_config_init(plugin_type, plugin_name)
+  $config_param_register[plugin_type][plugin_name]['license'] = license
+end
+
 def get_plugin_config(type, plugin)
   name = plugin['type'].gsub('_', '')
-  parameters = $config_param_register["#{type}/#{name}"]
+  parameters = $config_param_register[type][name]
   if !parameters
     parameters = []
   end
-  common_parameters = $config_param_register['common/plugin']
+  common_parameters = $config_param_register['common']['plugin']
   type_parameters = []
 
-  if $config_param_register["common/#{type}"]
-    type_parameters = $config_param_register["common/#{type}"]
+  if $config_param_register['common'][type]
+    type_parameters = $config_param_register['common'][type]
   end
 
   return common_parameters + parameters + type_parameters

@@ -1,8 +1,11 @@
 require_relative '../../../core/assertion'
 
 class Empty < Dataqube::Assertion
+  plugin_desc "Check if a field value is empty"
+  plugin_license "community"
+
+  desc "Source field to check"
   config_param :source, :string, multi: true
-  config_param :expected, ['failure', 'success'], default: 'success'
 
   def initialize()
     super("empty")

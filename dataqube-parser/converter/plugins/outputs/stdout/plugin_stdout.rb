@@ -1,6 +1,8 @@
 require_relative '../../../core/output'
 
 class Stdout < Dataqube::Output
+  plugin_desc "Output data to stdout"
+  plugin_license "community"
 
   def initialize()
     super("stdout")

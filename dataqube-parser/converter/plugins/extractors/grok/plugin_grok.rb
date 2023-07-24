@@ -1,11 +1,19 @@
 require_relative '../../../core/extractor'
 
 class Grok < Dataqube::Extractor
+  plugin_desc "Extract informations using grok patterns. This plugin assert an error if the extraction process failed depending on the 'expected' parameter"
+  plugin_license "community"
+
+  desc "Source field on which apply the grok pattern"
   config_param :source, :string, default: 'message'
+  desc "EXPLAIN THIS PARAM"
   config_param :target, :string, default: 'message'
-  config_param :expected, :string, default: 'success'
+  desc "Pattern grok to use. You can specify several patterns to check"
   config_param :pattern, :string, { multi: true }
+  desc "Severity error"
   config_param :severity, ['info', 'major', 'minor', 'fatal'], default: 'info'
+  desc "Indicate if you expect the check failed or succeed"
+  config_param :expected, ['failure', 'success'], default: 'success'
 
   def initialize()
     super("grok")

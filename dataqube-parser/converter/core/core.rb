@@ -21,7 +21,6 @@ class Core
   end
 
   def start()
-    @logger.info('Starting core')
     @inputs_loader.start()
     @outputs_loader.start()
     @extractors_loader.start()

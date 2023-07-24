@@ -1,10 +1,15 @@
 require_relative '../../../core/assertion'
 
 class Size < Dataqube::Assertion
+  plugin_desc "Check if the size of an array is include between a min and a max. Min and max are included."
+  plugin_license "community"
+
+  desc "Source field to check. The field must be an array."
   config_param :source, :string
+  desc "Min value"
   config_param :min, :integer, default: 0
+  desc "Max value"
   config_param :max, :integer, default: 0
-  config_param :expected, ['failure', 'success'], default: 'success'
 
   def initialize()
     super("size")

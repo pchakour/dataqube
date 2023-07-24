@@ -6,4 +6,6 @@ dataqube-parser/fluentd.conf
 **/*_thales
 **/*.gem
 **/.bundle
-**/vendor
+**/vendornode_modules
+.temp
+.cache
