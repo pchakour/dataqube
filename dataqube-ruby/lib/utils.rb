@@ -25,18 +25,20 @@ def merge_target_data(event, data)
   end
 end # def merge_target_data
 
-def merge_hash(hash, data)
-  if !data || data.empty?
+def merge_hash(hash, data, overwrite=false)
+  if !data || data.empty? || !data.is_a?(Hash)
     return hash
-  elsif !hash || hash.empty?
+  elsif !hash || hash.empty? || !hash.is_a?(Hash)
     return data
   else
-    return data.merge(hash) { |key, oldval, newval|
+    return hash.merge(data) { |key, oldval, newval|
       if oldval.is_a?(Hash) && newval.is_a?(Hash)
         merge_hash(oldval, newval)
       else
         if oldval == newval
           oldval
+        elsif overwrite
+          newval
         else
           [oldval, newval]
         end

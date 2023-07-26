@@ -15,6 +15,8 @@ class Grok < Dataqube::Extractor
   config_param :severity, ['info', 'major', 'minor', 'fatal'], default: 'info'
   desc "Indicate if you expect the check failed or succeed"
   config_param :expected, ['failure', 'success'], default: 'success'
+  desc "Change the default merge behavior with overwriting"
+  config_param :overwrite, :boolean, default: false
 
   def initialize()
     super("grok")
@@ -46,7 +48,7 @@ class Grok < Dataqube::Extractor
         end
       }
       #{quality(rule_tag, params)}
-      record = merge_hash(record, grok_result)
+      record = merge_hash(record, grok_result, #{params[:overwrite]})
     }
   end
 

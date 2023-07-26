@@ -8,7 +8,7 @@ class List < Dataqube::Transformer
   config_param :source, :string, default: 'message'
   desc """Target field to store parsed data.
 By default, the parsed data will be merged with the target field.
-If no target is provided, the source field will be used."""
+If no target is provided, the data will be merge with the event."""
   config_param :target, :string, default: nil
   desc "Change the default behavior that merge parsed data with target. True will replace the target field value by the parsed data"
   config_param :overwrite, :boolean, default: false
@@ -32,12 +32,8 @@ If no target is provided, the source field will be used."""
       else
         target_output = "#{record(target)} = merge_hash(#{record(target)}, list)"
       end
-    else
-      if overwrite
-        target_output = "#{record(source)} = list"
-      else
-        target_output = "#{record(source)} = merge_hash(#{record(source)}, list)"
-      end
+    elsif overwrite
+      "record = list"
     end
 
     %{

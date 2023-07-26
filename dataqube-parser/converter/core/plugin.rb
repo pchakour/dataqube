@@ -22,52 +22,50 @@ module Dataqube
     protected
 
     def escape(value)
-      if value.kind_of?(String)
-        return value.gsub("'", "\\\\\\\\'").gsub('"', '\\"')
-      end
-      return value
+      new_value = value.to_s
+      return new_value.gsub("'", "\\\\\\\\'").gsub('"', "\\\\\\\\'")
     end
 
     def value(value)
       # %{field}
       new_value = value
-      types = []
+      records = []
       if value.kind_of?(String)
         value.scan(/.*%\{(.*)\}[^%\{]*/).each {|match|
           match.each {|interpretation|
-            puts "Interpretation: #{interpretation}"
             parts = interpretation.split(':')
             field = parts[0]
-            puts "Field: #{field}"
             type = parts.length > 1 ? parts[1] : 'string'
-            puts "Type: #{type}"
             _record = record(field)
-            types.push([_record, type])
+            records.push([_record, type])
             new_value = new_value.sub("%{#{interpretation}}", _record)
           }
         }
       
-        new_value = replace_except_first_occurrence_with_regex(new_value, /record\[[^\]]+\]/, "' + \\0")
+        if records.length > 0
+          new_value = replace_except_first_occurrence_with_regex(new_value, /record\[/, "' + \\0")
 
-        if !new_value.match?(/^record\[[^\]]+\]/)
-          new_value = "'" + new_value
-        end
-
-        if !new_value.match?(/record\[[^\]]+\]$/)
-          new_value = new_value + "'"
-        end
-
-        new_value.scan(/record\[[^\]]+\]/) { |match| 
-          puts "Match: #{match}"
-          type = types.shift[1]
-          conversion = 'to_s'
-          if type == 'int' || type == 'integer'
-            conversion = 'to_i'
-          elsif type == 'float'
-            conversion = 'to_f'
+          if !new_value.start_with?(records[0][0])
+            new_value = "'" + new_value
           end
-          new_value = new_value.sub(match, "\\0.#{conversion}")
-        }
+
+          if !new_value.end_with?(records[records.length - 1][0])
+            new_value = new_value + "'"
+          end
+
+          records.each{|value|
+            record = value[0]
+            type = value[1]
+
+            conversion = 'to_s'
+            if type == 'int' || type == 'integer'
+              conversion = 'to_i'
+            elsif type == 'float'
+              conversion = 'to_f'
+            end
+            new_value = new_value.sub(record, "\\0.#{conversion}")
+          }
+        end
       end
 
       return new_value

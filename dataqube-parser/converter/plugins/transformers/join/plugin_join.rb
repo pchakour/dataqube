@@ -15,11 +15,12 @@ class Join < Dataqube::Transformer
   desc "What to do to join events"
   config_param :using, {
     :when => {
-      :config_param => {
+      :type => {
         :rule_tag => rule_tag_type,
-        :code => { :type => :string, :desc => 'Ruby code to execute when conditions are met' }
-      }
-    }
+        :predicate => { :type => :string, :desc => 'Use Ruby predicate' }
+      },
+    },
+    :code => { :type => :string, :desc => 'Ruby code to execute when conditions are met' }
   },
   multi: true
 
