@@ -20,17 +20,31 @@ class GrokParser
       @grok.expand(pattern)
     end 
 
-    parser, ecs_fields = @grok.parsers[pattern]
+    parser, types, ecs_fields = @grok.parsers[pattern]
     match = parser.match(text)
     if !match
       raise 'Grok parse failure'
     end
 
-    return dotSplit(match.named_captures, ecs_fields)
+    return dotSplit(match.named_captures, ecs_fields, types)
   end
 
-  def dotSplit(hash, ecs_fields)
+  def dotSplit(hash, ecs_fields, types)
     if ecs_fields.empty?
+      hash.each {|key, value| 
+        begin
+          if types[key] == 'integer' || types[key] == 'int'
+            hash[key] = value.to_i
+          end
+  
+          if types[key] == 'float'
+            hash[key] = value.to_f
+          end
+        rescue => e
+          # Nothing to do
+        end
+      }
+
       return hash
     end
     
@@ -53,6 +67,6 @@ class GrokParser
       end
     }
 
-    return dotSplit(splitted, fields)
+    return dotSplit(splitted, fields, types)
   end
 end

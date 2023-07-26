@@ -16,19 +16,19 @@ OptionParser.new do |opts|
     options[:doctext] = d
   end
 
-  opts.on("-p", "--parser=[PARSER]", "Parser to use, one of [fluentd]") do |p|
+  opts.on("-p [PARSER]", "--parser [PARSER]", "Parser to use, one of [fluentd]") do |p|
     options[:parser] = p
   end
 
-  opts.on("-c", "--config=[PATH]", "Config path") do |c|
+  opts.on("-c [PATH]", "--config [PATH]", "Config path") do |c|
     options[:config] = c
   end
 
-  opts.on("--project-id=[ID]", "Project id") do |projectId|
+  opts.on("--project-id [ID]", "Project id") do |projectId|
     options[:projectId] = projectId
   end
 
-  opts.on("--project-version=[VERSION]", "Project version (default: last)") do |projectVersion|
+  opts.on("--project-version [VERSION]", "Project version (default: last)") do |projectVersion|
     options[:projectVersion] = projectVersion
   end
 end.parse!

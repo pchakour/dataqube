@@ -40,7 +40,7 @@ class Grok
     regexp, types, ecs_fields = expand_grok_pattern(grok_pattern)
     $log.info "Expanded the pattern #{grok_pattern} into #{regexp}"
     parser = Regexp.new(regexp)
-    @parsers[grok_pattern] = [parser, ecs_fields]
+    @parsers[grok_pattern] = [parser, types, ecs_fields]
   rescue GrokPatternNotFoundError => e
     raise e
   rescue => e

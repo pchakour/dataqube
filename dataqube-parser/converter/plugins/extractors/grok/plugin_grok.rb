@@ -1,8 +1,9 @@
 require_relative '../../../core/extractor'
 
 class Grok < Dataqube::Extractor
-  plugin_desc "Extract informations using grok patterns. This plugin assert an error if the extraction process failed depending on the 'expected' parameter"
   plugin_license "community"
+  plugin_desc "Extract informations using grok patterns"
+  plugin_details "This plugin assert an error if the extraction process failed depending on the 'expected' parameter"
 
   desc "Source field on which apply the grok pattern"
   config_param :source, :string, default: 'message'
@@ -61,9 +62,9 @@ class Grok < Dataqube::Extractor
 
   def rule_description(params)
     if params[:expected] == "failure"
-      return "The source #{params[:source]} must not match one of following pattern: #{params[:pattern].to_s.gsub('"', "\\\\\\\\'")}"
+      return "The source #{params[:source]} must not match one of following pattern: #{escape(params[:pattern])}"
     elsif params[:expected] == "success"
-      return "The source #{params[:source]} must match one of following patterns: #{params[:pattern].to_s.gsub('"', "\\\\\\\\'")}"
+      return "The source #{params[:source]} must match one of following patterns: #{escape(params[:pattern])}"
     end
   end
 end

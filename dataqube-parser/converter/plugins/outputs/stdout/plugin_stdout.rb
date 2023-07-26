@@ -13,6 +13,7 @@ class Stdout < Dataqube::Output
       "
       <match *>
         @type stdout
+        output_type json
       </match>
     "
     else

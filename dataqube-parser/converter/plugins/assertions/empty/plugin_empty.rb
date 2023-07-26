@@ -1,8 +1,63 @@
 require_relative '../../../core/assertion'
 
 class Empty < Dataqube::Assertion
-  plugin_desc "Check if a field value is empty"
   plugin_license "community"
+  plugin_desc "Check if a field value is empty"
+  plugin_details """
+  Empty `string`, `array` and the value `nil` are consider empty by the plugin.
+
+  <CodeGroup>
+  <CodeGroupItem title='CONFIG'>
+
+```yaml{10-12}
+- tag: EXTRACT_TEMPERATURES
+  extract:
+    - type: grok
+      pattern: \"Los Angeles temperatures: %{GREEDYDATA:temperatures}\"
+  transform:
+    - type: list
+      source: temperatures
+      overwrite: true
+  assert:
+    - type: empty
+      source: temperatures
+      expected: failure # We want the temperatures field not empty
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title='EVENT'>
+
+```json
+{
+  \"message\": \"Los Angeles temperatures: []\"
+}
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title='OUTPUT'>
+
+```json{5-15}
+{
+  \"temperatures\": [],
+  \"message\": \"Los Angeles temperatures: []\",
+  \"_dataqube.tags\": [\"EXTRACT_TEMPERATURES\"],
+  \"_dataqube.quality\": [
+    {
+      \"tag\": \"EXTRACT_TEMPERATURES\",
+      \"message\": \"Fields temperatures are empty\",
+      \"severity\": \"info\",
+      \"expected\": \"![\"\", nil, []]\",
+      \"value\": \"[]\",
+      \"status\": \"unresolved\",
+      \"id\": \"803471cc-9b1b-4e15-96c8-1979ec4260fe\"
+    }
+  ]
+}
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+"""
 
   desc "Source field to check"
   config_param :source, :string, multi: true
@@ -26,13 +81,13 @@ class Empty < Dataqube::Assertion
           quality!(record)
             .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} are not empty"}')
             .expect(record[field])
-            .toBeOneOf('', nil)
+            .toBeOneOf('', nil, [])
         else
           quality!(record)
             .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} are empty"}')
             .expect(record[field])
             .not
-            .toBeOneOf('', nil)
+            .toBeOneOf('', nil, [])
         end
       end
     }

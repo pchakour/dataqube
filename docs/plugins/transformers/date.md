@@ -1,14 +1,16 @@
 # date <Badge type='tip' text='community' vertical='top' />
 
+## Description
 Convert a string as a Date object
 
+## List of parameters
 | Parameter | Description | Required | Default |
 |---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null
-| [source](#source) | Source to get date string | Yes | null
-| [target](#target) | Target to write the date object. By default, the source will be overwrite with the date object | No | null
-| [format](#format) | Date format | No | null
+| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
+| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
+| [source](#source) | Source to get date string | Yes | null |
+| [target](#target) | Target to write the date object. By default, the source will be overwrite with the date object | No | null |
+| [format](#format) | Date format | No | null |
 
 ## Common parameters
 ### tag
@@ -16,8 +18,9 @@ Convert a string as a Date object
 <Badge type=warning text=optional vertical=bottom />
 
 List of tag to add if the plugin is well executed
-- Value type is `string` or an array of this type
+- Value type is `string`
 - The default is `null`
+- [Multi mode](#) is supported by this parameter
 
 ### when
 <br/>

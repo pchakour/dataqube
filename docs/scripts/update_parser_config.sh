@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 ### TODO
-# - Fusionner fonction print_param et print_subparam
-# - Traiter le problème saut de ligne dans le plugin list 
-# - Problème de type du champ source dans le plugin list
+# - merge function print_param and print_subparam
 
 DIRNAME=$(dirname $0)
 PARSER_PATH="${DIRNAME}/../../parser.sh"
@@ -56,18 +54,19 @@ function print_subparam {
       echo "Value type is an object composed by the following properties: " >> $output
       print_subparam $(_jq $subparams .$subparam_name'.config_param | @base64') $output "$title_mark#" "$indent$indent"
     else 
-      echo "$indent$(_jq $subparams .$subparam_name.desc)" >> $output
+      description=$(_jq $subparams .$subparam_name.desc)
+      echo "$indent$description" >> $output
       echo "" >> $output
-      multi=""
+      echo "$indent- Value type is \`$(_jq $subparams .type)\`" >> $output
+
       if [ "$(_jq $subparams '.options.multi')" == "true" ]
       then
-        multi=" or an array of this type"
+        echo "- [Multi mode](#) is supported by this parameter" >> $output
       fi
-      echo "$indent- Value type is \`$(_jq $subparams .type)\`$multi" >> $output
 
       if [ "$(_jq $subparams '.options.field_interpretation')" == "true" ]
       then
-        echo "- [Field interpretation](#) is accepted for this parameter" >> $output
+        echo "- [Field interpretation](#) is supported by this parameter" >> $output
       fi
     fi
   done
@@ -98,22 +97,23 @@ function print_param {
     echo "Value type is an object composed by the following properties: " >> $output
     print_subparam $(_jq $params '.type | @base64') $output "####" "  "
   else
-    multi=""
-    if [ "$(_jq $params '.options.multi')" == "true" ]
-    then
-      multi=" or an array of this type"
-    fi
-    echo "- Value type is \`$(_jq $params .type)\`$multi" >> $output
+    echo "- Value type is \`$(_jq $params .type)\`" >> $output
   fi
 
   if [ "$(_jq $params '.options | has("default")')" == "true" ]
   then
+    default=$(_jq $params '.options.default')
     echo "- The default is \`$default\`" >> $output
+  fi
+
+  if [ "$(_jq $params '.options.multi')" == "true" ]
+  then
+    echo "- [Multi mode](#) is supported by this parameter" >> $output
   fi
 
   if [ "$(_jq $params '.options.field_interpretation')" == "true" ]
   then
-    echo "- [Field interpretation](#) is accepted for this parameter" >> $output
+    echo "- [Field interpretation](#) is supported for this parameter" >> $output
   fi
 
   echo "" >> $output
@@ -128,7 +128,8 @@ function write_data {
   echo "# $title" > $index_output
   echo "" >> $index_output
 
-  echo "$(jq -r ".common.$type.description" $TMP_JSON_DOC)" >> $index_output
+  plugin_type_description=$(jq -r ".common.$type.description" $TMP_JSON_DOC)
+  echo "$plugin_type_description" >> $index_output
 
   echo "" >> $index_output
   echo "| Plugin | Description |" >> $index_output
@@ -140,16 +141,23 @@ function write_data {
     plugin_license=$(jq -r ".$type.$plugin.license" $TMP_JSON_DOC)
     echo "# $plugin <Badge type='tip' text='$plugin_license' vertical='top' />" >> $plugin_output
     echo "" >> $plugin_output
-    description=$(jq -r ".$type.$plugin.description" $TMP_JSON_DOC)
-    compact_description=$(jq -c ".$type.$plugin.description" $TMP_JSON_DOC)
-    if [ "$description" != "null" ]
+    echo "## Description" >> $plugin_output
+    plugin_description=$(echo -n "$(jq -r ".$type.$plugin.description" $TMP_JSON_DOC)" | sed -z "s/\n/<br\/>/g")
+    plugin_details=$(jq -r ".$type.$plugin.details" $TMP_JSON_DOC)
+    if [ "$plugin_description" != "null" ]
     then
-      echo "$description" >> $plugin_output
+      echo "$plugin_description" >> $plugin_output
     fi
 
-    echo "| [$plugin](./$plugin.md) | $compact_description |" >> $index_output
+    if [ "$plugin_details" != "null" ]
+    then
+      echo "$plugin_details" >> $plugin_output
+    fi
+
+    echo "| [$plugin](./$plugin.md) | $plugin_description |" >> $index_output
 
     echo "" >> $plugin_output
+    echo "## List of parameters" >> $plugin_output
     echo "| Parameter | Description | Required | Default |" >> $plugin_output
     echo "|---|---|---|---|" >> $plugin_output
 
@@ -179,9 +187,10 @@ function write_data {
         default="$(_jq $params '.options.default')"
       fi
 
-      param_name=$(_jq $params '.name')
+      param_name="$(_jq $params '.name')"
+      param_description="$(echo -n "$(_jq $params '.description')" | sed -z "s/\n/<br\/>/g")"
 
-      echo "| [$param_name](#$param_name) | $(_jq $params '.description') | $required | $default" >> $plugin_output
+      echo "| [$param_name](#$param_name) | $param_description | $required | $default |" >> $plugin_output
     done
   
     echo "" >> $plugin_output

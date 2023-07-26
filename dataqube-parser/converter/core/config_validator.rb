@@ -27,8 +27,9 @@ def plugin_config_init(type, name)
 
   if !$config_param_register[type][name]
     $config_param_register[type][name] = {
-      'badge' => 'unknown',
+      'license' => 'unknown',
       'description' => nil,
+      'details' => nil,
       'params' => []
     }
   end
@@ -62,17 +63,22 @@ def plugin_license(license)
   $config_param_register[plugin_type][plugin_name]['license'] = license
 end
 
+def plugin_details(details)
+  plugin_config_init(plugin_type, plugin_name)
+  $config_param_register[plugin_type][plugin_name]['details'] = details
+end
+
 def get_plugin_config(type, plugin)
-  name = plugin['type'].gsub('_', '')
-  parameters = $config_param_register[type][name]
+  name = plugin['type']
+  parameters = $config_param_register[type][name]['params']
   if !parameters
     parameters = []
   end
-  common_parameters = $config_param_register['common']['plugin']
+  common_parameters = $config_param_register['common']['plugin']['params']
   type_parameters = []
 
   if $config_param_register['common'][type]
-    type_parameters = $config_param_register['common'][type]
+    type_parameters = $config_param_register['common'][type]['params']
   end
 
   return common_parameters + parameters + type_parameters

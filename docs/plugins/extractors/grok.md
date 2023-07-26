@@ -1,16 +1,19 @@
 # grok <Badge type='tip' text='community' vertical='top' />
 
-Extract informations using grok patterns. This plugin assert an error if the extraction process failed depending on the 'expected' parameter
+## Description
+Extract informations using grok patterns
+This plugin assert an error if the extraction process failed depending on the 'expected' parameter
 
+## List of parameters
 | Parameter | Description | Required | Default |
 |---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null
-| [source](#source) | Source field on which apply the grok pattern | No | message
-| [target](#target) | EXPLAIN THIS PARAM | No | message
-| [pattern](#pattern) | Pattern grok to use. You can specify several patterns to check | Yes | null
-| [severity](#severity) | Severity error | No | info
-| [expected](#expected) | Indicate if you expect the check failed or succeed | No | success
+| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
+| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
+| [source](#source) | Source field on which apply the grok pattern | No | message |
+| [target](#target) | EXPLAIN THIS PARAM | No | message |
+| [pattern](#pattern) | Pattern grok to use. You can specify several patterns to check | Yes | null |
+| [severity](#severity) | Severity error | No | info |
+| [expected](#expected) | Indicate if you expect the check failed or succeed | No | success |
 
 ## Common parameters
 ### tag
@@ -18,8 +21,9 @@ Extract informations using grok patterns. This plugin assert an error if the ext
 <Badge type=warning text=optional vertical=bottom />
 
 List of tag to add if the plugin is well executed
-- Value type is `string` or an array of this type
-- The default is `success`
+- Value type is `string`
+- The default is `null`
+- [Multi mode](#) is supported by this parameter
 
 ### when
 <br/>
@@ -27,7 +31,7 @@ List of tag to add if the plugin is well executed
 
 Ruby predicate to indicate when execute this plugin
 - Value type is `string`
-- The default is `success`
+- The default is `null`
 
 ## Plugin parameters
 ### source
@@ -36,7 +40,7 @@ Ruby predicate to indicate when execute this plugin
 
 Source field on which apply the grok pattern
 - Value type is `string`
-- The default is `success`
+- The default is `message`
 
 ### target
 <br/>
@@ -44,14 +48,15 @@ Source field on which apply the grok pattern
 
 EXPLAIN THIS PARAM
 - Value type is `string`
-- The default is `success`
+- The default is `message`
 
 ### pattern
 <br/>
 <Badge type=tip text=required vertical=bottom />
 
 Pattern grok to use. You can specify several patterns to check
-- Value type is `string` or an array of this type
+- Value type is `string`
+- [Multi mode](#) is supported by this parameter
 
 ### severity
 <br/>
@@ -64,7 +69,7 @@ Severity error
   "minor",
   "fatal"
 ]`
-- The default is `success`
+- The default is `info`
 
 ### expected
 <br/>

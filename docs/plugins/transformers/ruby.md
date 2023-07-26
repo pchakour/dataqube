@@ -1,13 +1,15 @@
 # ruby <Badge type='tip' text='community' vertical='top' />
 
+## Description
 Execute ruby code
 
+## List of parameters
 | Parameter | Description | Required | Default |
 |---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null
-| [once](#once) | Code executed once at the startup. Could be useful to initialize some variables. | No | null
-| [each](#each) | Code executed for each event | No | 
+| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
+| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
+| [once](#once) | Code executed once at the startup. Could be useful to initialize some variables. | No | null |
+| [each](#each) | Code executed for each event | No |  |
 
 ## Common parameters
 ### tag
@@ -15,8 +17,9 @@ Execute ruby code
 <Badge type=warning text=optional vertical=bottom />
 
 List of tag to add if the plugin is well executed
-- Value type is `string` or an array of this type
-- The default is ``
+- Value type is `string`
+- The default is `null`
+- [Multi mode](#) is supported by this parameter
 
 ### when
 <br/>
@@ -24,7 +27,7 @@ List of tag to add if the plugin is well executed
 
 Ruby predicate to indicate when execute this plugin
 - Value type is `string`
-- The default is ``
+- The default is `null`
 
 ## Plugin parameters
 ### once
@@ -33,7 +36,7 @@ Ruby predicate to indicate when execute this plugin
 
 Code executed once at the startup. Could be useful to initialize some variables.
 - Value type is `string`
-- The default is ``
+- The default is `null`
 
 ### each
 <br/>

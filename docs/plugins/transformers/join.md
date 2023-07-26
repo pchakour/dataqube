@@ -1,15 +1,17 @@
 # join <Badge type='tip' text='community' vertical='top' />
 
+## Description
 Join events
 
+## List of parameters
 | Parameter | Description | Required | Default |
 |---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null
-| [by](#by) | Key shared between events to join. This field is a ruby instruction. | Yes | null
-| [from](#from) | Determine the beginning of a join section | Yes | null
-| [until](#until) | Determine the end of a join section | Yes | null
-| [using](#using) | What to do to join events | Yes | null
+| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
+| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
+| [by](#by) | Key shared between events to join. This field is a ruby instruction. | Yes | null |
+| [from](#from) | Determine the beginning of a join section | Yes | null |
+| [until](#until) | Determine the end of a join section | Yes | null |
+| [using](#using) | What to do to join events | Yes | null |
 
 ## Common parameters
 ### tag
@@ -17,8 +19,9 @@ Join events
 <Badge type=warning text=optional vertical=bottom />
 
 List of tag to add if the plugin is well executed
-- Value type is `string` or an array of this type
+- Value type is `string`
 - The default is `null`
+- [Multi mode](#) is supported by this parameter
 
 ### when
 <br/>
@@ -98,4 +101,5 @@ Value type is an object composed by the following properties:
     Check if an event is tagged by the rule_tag
 
     - Value type is `null`
+- [Multi mode](#) is supported by this parameter
 

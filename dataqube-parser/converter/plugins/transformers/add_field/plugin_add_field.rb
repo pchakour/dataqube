@@ -1,10 +1,9 @@
 require_relative '../../../core/transformer'
 
 class AddField < Dataqube::Transformer
-  plugin_desc """
-  This plugin allow you to add a new field in your record
-  
-  
+  plugin_license "community"
+  plugin_desc "This plugin allow you to add a new field in your record"
+  plugin_details """
 <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
@@ -13,13 +12,32 @@ class AddField < Dataqube::Transformer
   transform:
     - type: add_field
       name: new_field_message
-      value: \"Message: %{message}\"
+      value: \"Message => %{message}\"
 ```
 
   </CodeGroupItem>
+  <CodeGroupItem title='EVENT'>
+
+  ```json
+  {
+    \"message\": \"Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]\"
+  }
+  ```
+  
+  </CodeGroupItem>
+  <CodeGroupItem title='OUTPUT'>
+  
+  ```json{5-15}
+  {
+    \"message\": \"Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]\",
+    \"new_field_message\": \"Message => Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]\"
+    \"_dataqube.tags\": [\"EXAMPLE_ADD_FIELD\"],
+  }
+  ```
+  
+  </CodeGroupItem>
 </CodeGroup>
   """
-  plugin_license "community"
 
   desc "New field name"
   config_param :name, :string

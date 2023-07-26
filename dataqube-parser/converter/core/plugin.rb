@@ -21,18 +21,53 @@ module Dataqube
 
     protected
 
+    def escape(value)
+      if value.kind_of?(String)
+        return value.gsub("'", "\\\\\\\\'").gsub('"', '\\"')
+      end
+      return value
+    end
+
     def value(value)
       # %{field}
       new_value = value
-
+      types = []
       if value.kind_of?(String)
         value.scan(/.*%\{(.*)\}[^%\{]*/).each {|match|
-          match.each {|field|
-            new_value.sub("%{#{field}}", record(field))
+          match.each {|interpretation|
+            puts "Interpretation: #{interpretation}"
+            parts = interpretation.split(':')
+            field = parts[0]
+            puts "Field: #{field}"
+            type = parts.length > 1 ? parts[1] : 'string'
+            puts "Type: #{type}"
+            _record = record(field)
+            types.push([_record, type])
+            new_value = new_value.sub("%{#{interpretation}}", _record)
           }
         }
+      
+        new_value = replace_except_first_occurrence_with_regex(new_value, /record\[[^\]]+\]/, "' + \\0")
 
-        new_value = "'#{new_value}'"
+        if !new_value.match?(/^record\[[^\]]+\]/)
+          new_value = "'" + new_value
+        end
+
+        if !new_value.match?(/record\[[^\]]+\]$/)
+          new_value = new_value + "'"
+        end
+
+        new_value.scan(/record\[[^\]]+\]/) { |match| 
+          puts "Match: #{match}"
+          type = types.shift[1]
+          conversion = 'to_s'
+          if type == 'int' || type == 'integer'
+            conversion = 'to_i'
+          elsif type == 'float'
+            conversion = 'to_f'
+          end
+          new_value = new_value.sub(match, "\\0.#{conversion}")
+        }
       end
 
       return new_value
@@ -71,6 +106,20 @@ module Dataqube
     end
 
     private
+
+    def replace_except_first_occurrence_with_regex(input_string, regex_to_replace, replacement)
+      first_match = input_string.match(regex_to_replace)
+      if first_match
+        first_occurrence = first_match[0]
+        modified_string = input_string.sub(first_occurrence, '') # Remove the first occurrence
+        modified_string.gsub!(regex_to_replace, replacement) # Replace other occurrences
+        modified_string = first_occurrence + modified_string # Add back the first occurrence
+        return modified_string
+      end
+    
+      # If no match found, return the original string.
+      input_string
+    end
 
     def path_field(field)
       field_parts = field.split(']')

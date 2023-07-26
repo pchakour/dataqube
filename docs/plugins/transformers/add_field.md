@@ -1,30 +1,15 @@
 # add_field <Badge type='tip' text='community' vertical='top' />
 
+## Description
+<br/>  This plugin allow you to add a new field in your record<br/>  <br/>  <br/><CodeGroup><br/>  <CodeGroupItem title='CONFIG'><br/><br/>```yaml{3-5}<br/>- tag: EXAMPLE_ADD_FIELD<br/>  transform:<br/>    - type: add_field<br/>      name: new_field_message<br/>      value: "Message: %{message}"<br/>```<br/><br/>  </CodeGroupItem><br/></CodeGroup><br/>  
 
-  This plugin allow you to add a new field in your record
-  
-  
-<CodeGroup>
-  <CodeGroupItem title='CONFIG'>
-
-```yaml{3-5}
-- tag: EXAMPLE_ADD_FIELD
-  transform:
-    - type: add_field
-      name: new_field_message
-      value: "Message: %{message}"
-```
-
-  </CodeGroupItem>
-</CodeGroup>
-  
-
+## List of parameters
 | Parameter | Description | Required | Default |
 |---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null
-| [name](#name) | New field name | Yes | null
-| [value](#value) | New value field | Yes | null
+| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
+| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
+| [name](#name) | New field name | Yes | null |
+| [value](#value) | New value field | Yes | null |
 
 ## Common parameters
 ### tag
@@ -32,8 +17,9 @@
 <Badge type=warning text=optional vertical=bottom />
 
 List of tag to add if the plugin is well executed
-- Value type is `string` or an array of this type
+- Value type is `string`
 - The default is `null`
+- [Multi mode](#) is supported by this parameter
 
 ### when
 <br/>
@@ -57,5 +43,5 @@ New field name
 
 New value field
 - Value type is `string`
-- [Field interpretation](#) is accepted for this parameter
+- [Field interpretation](#) is supported for this parameter
 

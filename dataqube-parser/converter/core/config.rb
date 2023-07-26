@@ -57,5 +57,9 @@ class Config
   def load(config_path)
     puts "Reading config file " + config_path
     @content = YAML.load_file(config_path)
+
+    if !@content.key?('rules')
+      @content['rules'] = []
+    end
   end
 end
