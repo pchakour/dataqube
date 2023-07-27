@@ -1,7 +1,42 @@
 # add_field <Badge type='tip' text='community' vertical='top' />
 
 ## Description
-<br/>  This plugin allow you to add a new field in your record<br/>  <br/>  <br/><CodeGroup><br/>  <CodeGroupItem title='CONFIG'><br/><br/>```yaml{3-5}<br/>- tag: EXAMPLE_ADD_FIELD<br/>  transform:<br/>    - type: add_field<br/>      name: new_field_message<br/>      value: "Message: %{message}"<br/>```<br/><br/>  </CodeGroupItem><br/></CodeGroup><br/>  
+This plugin allow you to add a new field in your record
+
+<CodeGroup>
+  <CodeGroupItem title='CONFIG'>
+
+```yaml{3-5}
+- tag: EXAMPLE_ADD_FIELD
+  transform:
+    - type: add_field
+      name: new_field_message
+      value: "Message => %{message}"
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title='EVENT'>
+
+  ```json
+  {
+    "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
+  }
+  ```
+  
+  </CodeGroupItem>
+  <CodeGroupItem title='OUTPUT'>
+  
+  ```json{5-15}
+  {
+    "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
+    "new_field_message": "Message => Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
+    "_dataqube.tags": ["EXAMPLE_ADD_FIELD"],
+  }
+  ```
+  
+  </CodeGroupItem>
+</CodeGroup>
+  
 
 ## List of parameters
 | Parameter | Description | Required | Default |

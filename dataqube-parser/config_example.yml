@@ -16,11 +16,12 @@ outputs:
   #   password: admin
   #   cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
 
-# rules:
-#   - tag: EXTRACT_TEMPERATURES
-#     extract:
-#       - type: grok
-#         pattern: "Los Angeles temperatures: %{GREEDYDATA:temperatures}"
+rules:
+  - tag: EXTRACT_TEMPERATURES
+    extract:
+      - type: kv
+        source: message
+
 #     transform:
 #       - type: list
 #         source: temperatures

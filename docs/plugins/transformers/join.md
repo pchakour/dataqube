@@ -78,28 +78,21 @@ Value type is an object composed by the following properties:
 What to do to join events
 
 Value type is an object composed by the following properties: 
+#### code
+
+<br/>
+<Badge type=tip text=required vertical=bottom />
+
+  Ruby code to execute when conditions are met
+
+  - Value type is `null`
 #### when
 
 <br/>
 <Badge type=tip text=required vertical=bottom />
 
+  null
 
-Value type is an object composed by the following properties: 
-##### code
-
-<br/>
-<Badge type=tip text=required vertical=bottom />
-
-    Ruby code to execute when conditions are met
-
-    - Value type is `null`
-##### rule_tag
-
-<br/>
-<Badge type=tip text=required vertical=bottom />
-
-    Check if an event is tagged by the rule_tag
-
-    - Value type is `null`
+  - Value type is `null`
 - [Multi mode](#) is supported by this parameter
 

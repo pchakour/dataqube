@@ -65,6 +65,8 @@ module Dataqube
             end
             new_value = new_value.sub(record, "\\0.#{conversion}")
           }
+        else
+          return "'#{new_value}'"
         end
       end
 

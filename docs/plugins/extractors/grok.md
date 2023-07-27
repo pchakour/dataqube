@@ -2,7 +2,90 @@
 
 ## Description
 Extract informations using grok patterns
-This plugin assert an error if the extraction process failed depending on the 'expected' parameter
+
+This plugin assert an error if the extraction process failed depending on the match result and the [expected](#expected) parameter.
+
+This is a case where everything is going well.
+
+<CodeGroup>
+<CodeGroupItem title='CONFIG'>
+
+```yaml{10-12}
+- tag: EXTRACT_TEMPERATURES
+  extract:
+    - type: grok
+      pattern: "Los Angeles temperatures: %{GREEDYDATA:temperatures}"
+```
+
+</CodeGroupItem>
+<CodeGroupItem title='EVENT'>
+
+```json
+{
+"message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
+}
+```
+
+</CodeGroupItem>
+<CodeGroupItem title='OUTPUT'>
+
+```json{5-15}
+{
+"message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
+"temperatures": [64, 65, 67, 67, 65, 65, 66],
+"_dataqube.tags": ["EXTRACT_TEMPERATURES"]
+}
+```
+
+</CodeGroupItem>
+</CodeGroup>
+
+This is an another example where the plugin assert an error:
+
+<CodeGroup>
+<CodeGroupItem title='CONFIG'>
+
+```yaml{10-12}
+- tag: EXTRACT_TEMPERATURES
+  extract:
+    - type: grok
+      pattern: "Los Angeles temperatures: %{GREEDYDATA:temperatures}"
+      # We expect that the grok failed, but the grok will match correctly so the plugin will assert an error
+      expected: failure 
+```
+
+</CodeGroupItem>
+<CodeGroupItem title='EVENT'>
+
+```json
+{
+"message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
+}
+```
+
+</CodeGroupItem>
+<CodeGroupItem title='OUTPUT'>
+
+```json{5-15}
+{
+  "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
+  "_dataqube.quality": [
+    {
+      "tag": "EXTRACT_TEMPERATURES",
+      "message": "The source message must not match one of following pattern: Los Angeles temperatures: %{GREEDYDATA:temperatures}",
+      "severity": "info",
+      "expected": "!",
+      "value": "",
+      "status": "unresolved",
+      "id": "9f0a5c9d-3622-440b-82d5-f7b81665d14d"
+    }
+  ],
+  "temperatures": "[64, 65, 67, 67, 65, 65, 66]"
+}
+```
+
+</CodeGroupItem>
+</CodeGroup>
 
 ## List of parameters
 | Parameter | Description | Required | Default |
@@ -10,10 +93,11 @@ This plugin assert an error if the extraction process failed depending on the 'e
 | [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
 | [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
 | [source](#source) | Source field on which apply the grok pattern | No | message |
-| [target](#target) | EXPLAIN THIS PARAM | No | message |
+| [target](#target) | Target to store extracted data | No | message |
 | [pattern](#pattern) | Pattern grok to use. You can specify several patterns to check | Yes | null |
 | [severity](#severity) | Severity error | No | info |
 | [expected](#expected) | Indicate if you expect the check failed or succeed | No | success |
+| [overwrite](#overwrite) | Change the default merge behavior with overwriting | No | false |
 
 ## Common parameters
 ### tag
@@ -46,7 +130,7 @@ Source field on which apply the grok pattern
 <br/>
 <Badge type=warning text=optional vertical=bottom />
 
-EXPLAIN THIS PARAM
+Target to store extracted data
 - Value type is `string`
 - The default is `message`
 
@@ -81,4 +165,12 @@ Indicate if you expect the check failed or succeed
   "success"
 ]`
 - The default is `success`
+
+### overwrite
+<br/>
+<Badge type=warning text=optional vertical=bottom />
+
+Change the default merge behavior with overwriting
+- Value type is `boolean`
+- The default is `false`
 

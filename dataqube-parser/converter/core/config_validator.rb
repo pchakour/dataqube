@@ -117,7 +117,7 @@ def check_type(parameter_name, parameter_value, config, plugin_type, name)
 end
 
 def check_plugin_types(plugin_type, plugin)
-  name = plugin[:type]
+  name = plugin['type']
   parameters = get_plugin_config(plugin_type, plugin)
   
   plugin.each do |parameter_name, parameter_value|
@@ -129,7 +129,7 @@ def check_plugin_types(plugin_type, plugin)
 end
 
 def check_required(type, plugin)
-  name = plugin[:type]
+  name = plugin['type']
   parameters = get_plugin_config(type, plugin)
 
   required_parameters = parameters.select { |parameter|
@@ -145,7 +145,7 @@ def check_required(type, plugin)
 end
 
 def check_unknown(type, plugin)
-  name = plugin[:type]
+  name = plugin['type']
   parameters = get_plugin_config(type, plugin)
   plugin.each do |parameter_name, parameter_value|
     if parameter_name != 'type'

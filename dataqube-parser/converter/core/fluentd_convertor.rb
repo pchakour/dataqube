@@ -87,15 +87,22 @@ class FluentdConvertor
       conversion << "<filter *>\n"
     end
     each_rule = get_each(rule).gsub(/^\s*$\n/, '')
+    once_code = get_once(rule).gsub(/^\s*$\n/, '')
+
+    if once_code != ''
+      once_code = %{
+      begin
+        #{once_code}
+      rescue => e
+        puts 'Error when excuting init code of rule #{rule['tag']}'
+        raise e
+      end
+      }
+    end
     conversion << %{
   @type dataqube
   init "${
-    begin
-      #{get_once(rule).gsub(/^\s*$\n/, '')}
-    rescue => e
-      puts 'Error when excuting init code of rule #{rule['tag']}'
-      raise e
-    end
+    #{once_code}
   }"
   code "${
     begin

@@ -4,7 +4,7 @@ Transform your data using one of the following plugins:
 
 | Plugin | Description |
 |---|---|
-| [add_field](./add_field.md) | <br/>  This plugin allow you to add a new field in your record<br/>  <br/>  <br/><CodeGroup><br/>  <CodeGroupItem title='CONFIG'><br/><br/>```yaml{3-5}<br/>- tag: EXAMPLE_ADD_FIELD<br/>  transform:<br/>    - type: add_field<br/>      name: new_field_message<br/>      value: "Message: %{message}"<br/>```<br/><br/>  </CodeGroupItem><br/></CodeGroup><br/>   |
+| [add_field](./add_field.md) | This plugin allow you to add a new field in your record |
 | [date](./date.md) | Convert a string as a Date object |
 | [join](./join.md) | Join events |
 | [list](./list.md) | Parse a serialized list |
