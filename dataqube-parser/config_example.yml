@@ -19,8 +19,11 @@ outputs:
 rules:
   - tag: EXTRACT_TEMPERATURES
     extract:
-      - type: kv
-        source: message
+      - type: grok
+        pattern: ^%{TIMESTAMP_ISO8601:date} %{GREEDYDATA:log}$ 
+    transform:
+      - type: date
+        source: date
 
 #     transform:
 #       - type: list

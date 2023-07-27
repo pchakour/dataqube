@@ -23,8 +23,6 @@ const inputs = pluginsSidebarItems.find((type) => type.path === '/plugins/inputs
 pluginsSidebarItems = pluginsSidebarItems.filter((type) => type.path !== '/plugins/inputs/');
 pluginsSidebarItems.unshift(inputs);
 
-fs.writeFileSync('toremove.log', JSON.stringify(pluginsSidebarItems));
-
 module.exports = {
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title

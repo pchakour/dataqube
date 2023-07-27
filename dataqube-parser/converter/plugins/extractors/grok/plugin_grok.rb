@@ -4,9 +4,9 @@ class Grok < Dataqube::Extractor
   plugin_license "community"
   plugin_desc "Extract informations using grok patterns"
   plugin_details """
+::: warning
 This plugin assert an error if the extraction process failed depending on the match result and the [expected](#expected) parameter.
-
-This is a case where everything is going well.
+:::
 
 <CodeGroup>
 <CodeGroupItem title='CONFIG'>
@@ -40,55 +40,6 @@ This is a case where everything is going well.
 
 </CodeGroupItem>
 </CodeGroup>
-
-This is an another example where the plugin assert an error:
-
-<CodeGroup>
-<CodeGroupItem title='CONFIG'>
-
-```yaml{3-6}
-- tag: EXTRACT_TEMPERATURES
-  extract:
-    - type: grok
-      pattern: \"Los Angeles temperatures: %{GREEDYDATA:temperatures}\"
-      # We expect that the grok failed, but the grok will match correctly so the plugin will assert an error
-      expected: failure 
-```
-
-</CodeGroupItem>
-<CodeGroupItem title='EVENT'>
-
-```json
-{
-\"message\": \"Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]\"
-}
-```
-
-</CodeGroupItem>
-<CodeGroupItem title='OUTPUT'>
-
-```json{3-12}
-{
-  \"message\": \"Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]\",
-  \"_dataqube.quality\": [
-    {
-      \"tag\": \"EXTRACT_TEMPERATURES\",
-      \"message\": \"The source message must not match one of following pattern: Los Angeles temperatures: %{GREEDYDATA:temperatures}\",
-      \"severity\": \"info\",
-      \"expected\": \"!\",
-      \"value\": \"\",
-      \"status\": \"unresolved\",
-      \"id\": \"9f0a5c9d-3622-440b-82d5-f7b81665d14d\"
-    }
-  ],
-  \"temperatures\": \"[64, 65, 67, 67, 65, 65, 66]\"
-}
-```
-
-</CodeGroupItem>
-</CodeGroup>
-
-
 """
 
   desc "Source field on which apply the grok pattern"

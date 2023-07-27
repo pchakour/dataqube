@@ -25,8 +25,6 @@ const inputs = pluginsSidebarItems.find((type) => type.target === '/plugins/inpu
 pluginsSidebarItems = pluginsSidebarItems.filter((type) => type.target !== '/plugins/inputs/');
 pluginsSidebarItems.unshift(inputs);
 
-fs.writeFileSync('toremove.log', JSON.stringify(pluginsSidebarItems));
-
 
 export default defineUserConfig({
   lang: 'en-US',

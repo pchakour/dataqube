@@ -3,14 +3,14 @@
 ## Description
 Extract informations using grok patterns
 
+::: warning
 This plugin assert an error if the extraction process failed depending on the match result and the [expected](#expected) parameter.
-
-This is a case where everything is going well.
+:::
 
 <CodeGroup>
 <CodeGroupItem title='CONFIG'>
 
-```yaml{10-12}
+```yaml{3-4}
 - tag: EXTRACT_TEMPERATURES
   extract:
     - type: grok
@@ -29,58 +29,11 @@ This is a case where everything is going well.
 </CodeGroupItem>
 <CodeGroupItem title='OUTPUT'>
 
-```json{5-15}
+```json{3}
 {
 "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
 "temperatures": [64, 65, 67, 67, 65, 65, 66],
 "_dataqube.tags": ["EXTRACT_TEMPERATURES"]
-}
-```
-
-</CodeGroupItem>
-</CodeGroup>
-
-This is an another example where the plugin assert an error:
-
-<CodeGroup>
-<CodeGroupItem title='CONFIG'>
-
-```yaml{10-12}
-- tag: EXTRACT_TEMPERATURES
-  extract:
-    - type: grok
-      pattern: "Los Angeles temperatures: %{GREEDYDATA:temperatures}"
-      # We expect that the grok failed, but the grok will match correctly so the plugin will assert an error
-      expected: failure 
-```
-
-</CodeGroupItem>
-<CodeGroupItem title='EVENT'>
-
-```json
-{
-"message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
-}
-```
-
-</CodeGroupItem>
-<CodeGroupItem title='OUTPUT'>
-
-```json{5-15}
-{
-  "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
-  "_dataqube.quality": [
-    {
-      "tag": "EXTRACT_TEMPERATURES",
-      "message": "The source message must not match one of following pattern: Los Angeles temperatures: %{GREEDYDATA:temperatures}",
-      "severity": "info",
-      "expected": "!",
-      "value": "",
-      "status": "unresolved",
-      "id": "9f0a5c9d-3622-440b-82d5-f7b81665d14d"
-    }
-  ],
-  "temperatures": "[64, 65, 67, 67, 65, 65, 66]"
 }
 ```
 
@@ -93,7 +46,6 @@ This is an another example where the plugin assert an error:
 | [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
 | [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
 | [source](#source) | Source field on which apply the grok pattern | No | message |
-| [target](#target) | Target to store extracted data | No | message |
 | [pattern](#pattern) | Pattern grok to use. You can specify several patterns to check | Yes | null |
 | [severity](#severity) | Severity error | No | info |
 | [expected](#expected) | Indicate if you expect the check failed or succeed | No | success |
@@ -123,14 +75,6 @@ Ruby predicate to indicate when execute this plugin
 <Badge type=warning text=optional vertical=bottom />
 
 Source field on which apply the grok pattern
-- Value type is `string`
-- The default is `message`
-
-### target
-<br/>
-<Badge type=warning text=optional vertical=bottom />
-
-Target to store extracted data
 - Value type is `string`
 - The default is `message`
 

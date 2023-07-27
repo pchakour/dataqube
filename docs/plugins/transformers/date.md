@@ -3,14 +3,58 @@
 ## Description
 Convert a string as a Date object
 
+::: warning
+This plugin assert an error if the date parsing failed
+:::
+
+<CodeGroup>
+  <CodeGroupItem title='CONFIG'>
+
+```yaml{3-5}
+- tag: EXAMPLE_PARSE_DATE
+  extract:
+    - type: grok
+      pattern: ^%{TIMESTAMP_ISO8601:date} %{GREEDYDATA:log}$ 
+  transform:
+    - type: date
+      source: date
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title='EVENT'>
+
+  ```json
+  {
+    "message": "2023-07-07T06:51:20.763Z Temperatures: LosAngeles=65 NewYork=63 Paris=55"
+  }
+  ```
+  
+  </CodeGroupItem>
+  <CodeGroupItem title='OUTPUT'>
+  
+  ```json{5-15}
+  {
+    "message": "2023-07-07T06:51:20.763Z Temperatures: LosAngeles=65 NewYork=63 Paris=55",
+    "date": "2023-07-07T06:51:20.763Z",
+    "log": "Temperatures: LosAngeles=65 NewYork=63 Paris=55",
+    "_dataqube.tags": ["EXAMPLE_PARSE_DATE"],
+    "timestamp": "2023-07-07T06:51:20Z"
+  }
+  ```
+  
+  </CodeGroupItem>
+</CodeGroup>
+  
+
 ## List of parameters
 | Parameter | Description | Required | Default |
 |---|---|---|---|
 | [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
 | [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
 | [source](#source) | Source to get date string | Yes | null |
-| [target](#target) | Target to write the date object. By default, the source will be overwrite with the date object | No | null |
-| [format](#format) | Date format | No | null |
+| [target](#target) | Target to write the date object. By default, the date object will be use as default event date by storing it in the timestamp field | No | timestamp |
+| [format](#format) | <br/>Date format to use. You can set the format to a iso8601 or specify the format using the following list of formatting options:<br/><br/>| option | description |<br/>|---|---|<br/>| %a | The abbreviated weekday name (“Sun”) |<br/>| %A | The full weekday name (“Sunday”) |<br/>| %b | The abbreviated month name (“Jan”) |<br/>| %B | The full month name (“January”) |<br/>| %c | The preferred local date and time representation |<br/>| %C | Century (20 in 2009) |<br/>| %d | Day of the month (01..31) |<br/>| %D | Date (%m/%d/%y) |<br/>| %e | Day of the month, blank-padded ( 1..31) |<br/>| %F | Equivalent to %Y-%m-%d (the ISO 8601 date format) |<br/>| %h | Equivalent to %b |<br/>| %H | Hour of the day, 24-hour clock (00..23) |<br/>| %I | Hour of the day, 12-hour clock (01..12) |<br/>| %j | Day of the year (001..366) |<br/>| %k | hour, 24-hour clock, blank-padded ( 0..23) |<br/>| %l | hour, 12-hour clock, blank-padded ( 0..12) |<br/>| %L | Millisecond of the second (000..999) |<br/>| %m | Month of the year (01..12) |<br/>| %M | Minute of the hour (00..59) |<br/>| %n | Newline (n) |<br/>| %N | Fractional seconds digits, default is 9 digits (nanosecond) |<br/>| %3N | millisecond (3 digits) |<br/>| %6N | microsecond (6 digits) |<br/>| %9N | nanosecond (9 digits) |<br/>| %p | Meridian indicator (“AM” or “PM”) |<br/>| %P | Meridian indicator (“am” or “pm”) |<br/>| %r | time, 12-hour (same as %I:%M:%S %p) |<br/>| %R | time, 24-hour (%H:%M) |<br/>| %s | Number of seconds since 1970-01-01 00:00:00 UTC. |<br/>| %S | Second of the minute (00..60) |<br/>| %t | Tab character (t) |<br/>| %T | time, 24-hour (%H:%M:%S) |<br/>| %u | Day of the week as a decimal, Monday being 1. (1..7) |<br/>| %U | Week number of the current year, starting with the first Sunday as the first day of the first week (00..53) |<br/>| %v | VMS date (%e-%b-%Y) |<br/>| %V | Week number of year according to ISO 8601 (01..53) |<br/>| %W | Week number of the current year, starting with the first Monday as the first day of the first week (00..53) |<br/>| %w | Day of the week (Sunday is 0, 0..6) |<br/>| %x | Preferred representation for the date alone, no time |<br/>| %X | Preferred representation for the time alone, no date |<br/>| %y | Year without a century (00..99) |<br/>| %Y | Year which may include century, if provided |<br/>| %z | Time zone as hour offset from UTC (e.g. +0900) |<br/>| %Z | Time zone name | | No | iso8601 |
+| [severity](#severity) | Severity if the plugin assert an error | No | info |
 
 ## Common parameters
 ### tag
@@ -42,15 +86,76 @@ Source to get date string
 <br/>
 <Badge type=warning text=optional vertical=bottom />
 
-Target to write the date object. By default, the source will be overwrite with the date object
+Target to write the date object. By default, the date object will be use as default event date by storing it in the timestamp field
 - Value type is `string`
-- The default is `null`
+- The default is `timestamp`
 
 ### format
 <br/>
 <Badge type=warning text=optional vertical=bottom />
 
-Date format
+
+Date format to use. You can set the format to a iso8601 or specify the format using the following list of formatting options:
+
+| option | description |
+|---|---|
+| %a | The abbreviated weekday name (“Sun”) |
+| %A | The full weekday name (“Sunday”) |
+| %b | The abbreviated month name (“Jan”) |
+| %B | The full month name (“January”) |
+| %c | The preferred local date and time representation |
+| %C | Century (20 in 2009) |
+| %d | Day of the month (01..31) |
+| %D | Date (%m/%d/%y) |
+| %e | Day of the month, blank-padded ( 1..31) |
+| %F | Equivalent to %Y-%m-%d (the ISO 8601 date format) |
+| %h | Equivalent to %b |
+| %H | Hour of the day, 24-hour clock (00..23) |
+| %I | Hour of the day, 12-hour clock (01..12) |
+| %j | Day of the year (001..366) |
+| %k | hour, 24-hour clock, blank-padded ( 0..23) |
+| %l | hour, 12-hour clock, blank-padded ( 0..12) |
+| %L | Millisecond of the second (000..999) |
+| %m | Month of the year (01..12) |
+| %M | Minute of the hour (00..59) |
+| %n | Newline (n) |
+| %N | Fractional seconds digits, default is 9 digits (nanosecond) |
+| %3N | millisecond (3 digits) |
+| %6N | microsecond (6 digits) |
+| %9N | nanosecond (9 digits) |
+| %p | Meridian indicator (“AM” or “PM”) |
+| %P | Meridian indicator (“am” or “pm”) |
+| %r | time, 12-hour (same as %I:%M:%S %p) |
+| %R | time, 24-hour (%H:%M) |
+| %s | Number of seconds since 1970-01-01 00:00:00 UTC. |
+| %S | Second of the minute (00..60) |
+| %t | Tab character (t) |
+| %T | time, 24-hour (%H:%M:%S) |
+| %u | Day of the week as a decimal, Monday being 1. (1..7) |
+| %U | Week number of the current year, starting with the first Sunday as the first day of the first week (00..53) |
+| %v | VMS date (%e-%b-%Y) |
+| %V | Week number of year according to ISO 8601 (01..53) |
+| %W | Week number of the current year, starting with the first Monday as the first day of the first week (00..53) |
+| %w | Day of the week (Sunday is 0, 0..6) |
+| %x | Preferred representation for the date alone, no time |
+| %X | Preferred representation for the time alone, no date |
+| %y | Year without a century (00..99) |
+| %Y | Year which may include century, if provided |
+| %z | Time zone as hour offset from UTC (e.g. +0900) |
+| %Z | Time zone name |
 - Value type is `string`
-- The default is `null`
+- The default is `iso8601`
+
+### severity
+<br/>
+<Badge type=warning text=optional vertical=bottom />
+
+Severity if the plugin assert an error
+- Value type is `[
+  "info",
+  "major",
+  "minor",
+  "fatal"
+]`
+- The default is `info`
 

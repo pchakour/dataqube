@@ -1,8 +1,25 @@
 require_relative '../../../core/output'
 
 class Elasticsearch < Dataqube::Output
-  plugin_desc "Output data to an Elasticsearch database"
   plugin_license "community"
+  plugin_desc "Output data to an Elasticsearch database"
+  plugin_details """
+
+  <CodeGroup>
+  <CodeGroupItem title='CONFIG'>
+  
+  ```yaml
+  - type: elasticsearch
+    scheme: https
+    user: admin
+    password: admin
+    cacert: path/to/cacert.pem
+  ```
+  
+  </CodeGroupItem>
+  </CodeGroup>
+
+  """
 
   desc "Connection protocol to use, specify https if your Elasticsearch endpoint supports SSL"
   config_param :scheme, ['http', 'https'], default: 'http'

@@ -3,6 +3,23 @@
 ## Description
 Output data to an Elasticsearch database
 
+
+  <CodeGroup>
+  <CodeGroupItem title='CONFIG'>
+  
+  ```yaml
+  - type: elasticsearch
+    scheme: https
+    user: admin
+    password: admin
+    cacert: path/to/cacert.pem
+  ```
+  
+  </CodeGroupItem>
+  </CodeGroup>
+
+  
+
 ## List of parameters
 | Parameter | Description | Required | Default |
 |---|---|---|---|
