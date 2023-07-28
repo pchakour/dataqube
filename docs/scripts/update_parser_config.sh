@@ -7,7 +7,7 @@ DIRNAME=$(dirname $0)
 PARSER_PATH="${DIRNAME}/../../parser.sh"
 TMP_JSON_DOC="${DIRNAME}/.doc.json"
 
-OUTPUT_DIR="${DIRNAME}/../plugins"
+OUTPUT_DIR="${DIRNAME}/../documentation/parsing_tool/plugins"
 INPUTS_DOC="${OUTPUT_DIR}/inputs"
 OUTPUTS_DOC="${OUTPUT_DIR}/outputs"
 EXTRACTORS_DOC="${OUTPUT_DIR}/extractors"

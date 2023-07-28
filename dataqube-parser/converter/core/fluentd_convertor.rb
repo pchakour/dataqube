@@ -52,7 +52,7 @@ class FluentdConvertor
       conversion << convert_output(output)
     end
 
-    if config.content.key?('autostop') && config.content['autostop']['enabled']
+    if config.content.key?('system') && config.content['system'].key?('autostop') && config.content['autostop']['enabled']
       conversion << "
       <match **>
         @type autoshutdown

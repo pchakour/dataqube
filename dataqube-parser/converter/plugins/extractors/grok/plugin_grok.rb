@@ -44,7 +44,42 @@ This plugin assert an error if the extraction process failed depending on the ma
 
   desc "Source field on which apply the grok pattern"
   config_param :source, :string, default: 'message'
-  desc "Pattern grok to use. You can specify several patterns to check"
+  desc """
+Pattern grok to use. You can specify several patterns to check.
+
+The pattern can use typing for a field to convert the value to a string, an integer or a float.
+
+Example to convert as an integer:
+
+```
+  %{NUMBER:name:int}
+```
+
+or
+
+```
+  %{NUMBER:name:integer}
+```
+
+The field support structure naming to create structured fields in your event.
+
+```
+  %{LOGLEVEL:[log][level]}
+```
+
+will create the following event
+
+```
+  { log: { level: 'info' }}
+```
+
+The field name support also the use of `@metadata` structure to store temporary data.
+`@metadata` are kept if the event has an assertion.
+
+```
+  %{NUMBER:[@metadata][name]}
+```
+"""
   config_param :pattern, :string, { multi: true }
   desc "Severity error"
   config_param :severity, ['info', 'major', 'minor', 'fatal'], default: 'info'

@@ -15,6 +15,7 @@ class Contains < Dataqube::Assertion
   transform:
     - type: list
       source: temperatures
+      target: temperatures
       overwrite: true
   assert:
     - type: contains

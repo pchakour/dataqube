@@ -1,25 +1,20 @@
-# contains <Badge type='tip' text='community' vertical='top' />
+# lower <Badge type='tip' text='community' vertical='top' />
 
 ## Description
-Check if an array contains a specific value
+Check if a field value is lower than a specified value
 
-  <CodeGroup>
+<CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-12}
-- tag: EXTRACT_TEMPERATURES
+```yaml{6-8}
+- tag: EXPECTED_TEMPERATURE
   extract:
     - type: grok
-      pattern: "Los Angeles temperatures: %{GREEDYDATA:temperatures}"
-  transform:
-    - type: list
-      source: temperatures
-      target: temperatures
-      overwrite: true
+      pattern: "Los Angeles max temperature is %{NUMBER:temperature:int}"
   assert:
-    - type: contains
-      source: temperatures
-      value: 50
+    - type: lower
+      source: temperature
+      value: 70
 ```
 
   </CodeGroupItem>
@@ -27,27 +22,28 @@ Check if an array contains a specific value
 
 ```json
 {
-  "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
+  "message": "Los Angeles max temperature is 71"
 }
 ```
 
   </CodeGroupItem>
   <CodeGroupItem title='OUTPUT'>
 
-```json{5-15}
+```json{6-16}
 {
-  "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
-  "temperatures": [64, 65, 67, 67, 65, 65, 66],
-  "_dataqube.tags": ["EXTRACT_TEMPERATURES"],
+  "temperature": 68,
+  "expected": 50,
+  "message": "Los Angeles max temperature is 71",
+  "_dataqube.tags": ["EXPECTED_TEMPERATURE"],
   "_dataqube.quality": [
     {
-      "tag": "EXTRACT_TEMPERATURES",
-      "message": "Field temperatures must contain 50",
+      "tag": "EXPECTED_TEMPERATURE",
+      "message": "Fields temperature must be lower than 70",
       "severity": "info",
-      "expected": "50",
-      "value": "[64, 65, 67, 67, 65, 65, 66]",
+      "expected": "70",
+      "value": "71",
       "status": "unresolved",
-      "id": "641b49e6-449e-4fbc-bd98-25829d77c3fc"
+      "id": "1dd3d1fa-46eb-4ef0-b02f-1a30f850b7ec"
     }
   ]
 }
@@ -55,6 +51,7 @@ Check if an array contains a specific value
 
   </CodeGroupItem>
 </CodeGroup>
+  
 
 ## List of parameters
 | Parameter | Description | Required | Default |
@@ -64,8 +61,8 @@ Check if an array contains a specific value
 | [message](#message) | Message to store when assert event | No | null |
 | [severity](#severity) | Severity of the assertion | No | info |
 | [expected](#expected) | Indicate if you expect the check failed or succeed | No | success |
-| [source](#source) | Source field to check. The field must be an array. | Yes | null |
-| [value](#value) | Value to find in the array | Yes | null |
+| [source](#source) | Source field to check | Yes | null |
+| [value](#value) | Value to compare | Yes | null |
 
 ## Common parameters
 ### tag
@@ -122,14 +119,15 @@ Indicate if you expect the check failed or succeed
 <br/>
 <Badge type=tip text=required vertical=bottom />
 
-Source field to check. The field must be an array.
+Source field to check
 - Value type is `string`
+- [Multi mode](#) is supported by this parameter
 
 ### value
 <br/>
 <Badge type=tip text=required vertical=bottom />
 
-Value to find in the array
+Value to compare
 - Value type is `any`
 - [Field interpretation](#) is supported for this parameter
 

@@ -1,8 +1,12 @@
 require_relative '../../../core/transformer'
 
 class Join < Dataqube::Transformer
-  plugin_desc "Join events"
   plugin_license "community"
+  plugin_desc "Join events"
+  plugin_details """
+
+  """
+
 
   rule_tag_type = { :type => :string, :desc => 'Check if an event is tagged by the rule_tag' }
 

@@ -1,24 +1,17 @@
-# ruby <Badge type='tip' text='community' vertical='top' />
+# add_field <Badge type='tip' text='community' vertical='top' />
 
 ## Description
-Execute ruby code
+This plugin allow you to add a new field in your record
 
-  <CodeGroup>
+<CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-12}
-- tag: EXAMPLE_RUBY
-  extract:
-    - type: grok
-      pattern: "Los Angeles temperatures: %{GREEDYDATA:temperatures}"
+```yaml{3-5}
+- tag: EXAMPLE_ADD_FIELD
   transform:
-    - type: list
-      source: temperatures
-      target: temperatures
-      overwrite: true
-    - type: ruby
-      each: |-
-        record['temperatures'] = record['temperatures'].map { |temperature| temperature - 10 }
+    - type: add_field
+      name: new_field_message
+      value: "Message => %{message}"
 ```
 
   </CodeGroupItem>
@@ -33,11 +26,11 @@ Execute ruby code
   </CodeGroupItem>
   <CodeGroupItem title='OUTPUT'>
   
-  ```json{3}
+  ```json{5-15}
   {
     "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
-    "temperatures": [54, 55, 57, 57, 55, 55, 56],
-    "_dataqube.tags": ["EXAMPLE_RUBY"]
+    "new_field_message": "Message => Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
+    "_dataqube.tags": ["EXAMPLE_ADD_FIELD"],
   }
   ```
   
@@ -50,8 +43,8 @@ Execute ruby code
 |---|---|---|---|
 | [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
 | [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
-| [once](#once) | Code executed once at the startup. Could be useful to initialize some variables. | No | null |
-| [each](#each) | Code executed for each event | No |  |
+| [name](#name) | New field name | Yes | null |
+| [value](#value) | New value field | Yes | null |
 
 ## Common parameters
 ### tag
@@ -72,19 +65,18 @@ Ruby predicate to indicate when execute this plugin
 - The default is `null`
 
 ## Plugin parameters
-### once
+### name
 <br/>
-<Badge type=warning text=optional vertical=bottom />
+<Badge type=tip text=required vertical=bottom />
 
-Code executed once at the startup. Could be useful to initialize some variables.
+New field name
 - Value type is `string`
-- The default is `null`
 
-### each
+### value
 <br/>
-<Badge type=warning text=optional vertical=bottom />
+<Badge type=tip text=required vertical=bottom />
 
-Code executed for each event
+New value field
 - Value type is `string`
-- The default is ``
+- [Field interpretation](#) is supported for this parameter
 

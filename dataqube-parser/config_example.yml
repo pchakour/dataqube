@@ -1,6 +1,7 @@
-autostop:
-  enabled: true
-  timeout: 2
+system:
+  autostop:
+    enabled: true
+    timeout: 2
 
 inputs:
   - type: tail
@@ -17,13 +18,14 @@ outputs:
   #   cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
 
 rules:
-  - tag: EXTRACT_TEMPERATURES
+  - tag: MAX_TEMPERATURE
     extract:
       - type: grok
-        pattern: ^%{TIMESTAMP_ISO8601:date} %{GREEDYDATA:log}$ 
-    transform:
-      - type: date
-        source: date
+        pattern: "%{TIMESTAMP_ISO8601:timestamp} Los Angeles temperature: %{NUMBER:temperature:int}"
+    assert:
+      - type: lower
+        source: temperature 
+        value: 70
 
 #     transform:
 #       - type: list

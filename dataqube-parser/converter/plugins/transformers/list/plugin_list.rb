@@ -32,8 +32,6 @@ If no target is provided, the data will be merge with the event."""
       else
         target_output = "#{record(target)} = merge_hash(#{record(target)}, list)"
       end
-    elsif overwrite
-      "record = list"
     end
 
     %{

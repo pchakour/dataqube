@@ -1,7 +1,0 @@
-# Inputs
-
-Read data from specific source using one of the following plugins:
-
-| Plugin | Description |
-|---|---|
-| [tail](./tail.md) | null |
