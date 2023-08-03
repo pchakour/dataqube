@@ -4,14 +4,13 @@ class List < Dataqube::Transformer
   plugin_desc "Parse a serialized list"
   plugin_license "community"
 
-  desc "Source field to parse"
-  config_param :source, :string, default: 'message'
-  desc """Target field to store parsed data.
-By default, the parsed data will be merged with the target field.
-If no target is provided, the data will be merge with the event."""
-  config_param :target, :string, default: nil
-  desc "Change the default behavior that merge parsed data with target. True will replace the target field value by the parsed data"
-  config_param :overwrite, :boolean, default: false
+  plugin_config do
+    required(:source).filled(:string).default('message').description("Source field to parse")
+    optional(:target).filled(:string).description("""Target field to store parsed data.
+  By default, the parsed data will be merged with the target field.
+  If no target is provided, the data will be merge with the event.""")
+    optional(:overwrite).filled(:bool).default(false).description("Change the default behavior that merge parsed data with target. True will replace the target field value by the parsed data")
+  end
 
   def initialize()
     super("list")

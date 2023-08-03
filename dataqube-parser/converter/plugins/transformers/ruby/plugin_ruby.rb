@@ -46,10 +46,10 @@ class Ruby < Dataqube::Transformer
 </CodeGroup>
   """
 
-  desc "Code executed once at the startup. Could be useful to initialize some variables."
-  config_param :once, :string, default: nil
-  desc "Code executed for each event"
-  config_param :each, :string, default: ""
+  plugin_config do
+    optional(:once).value(:string).description("Code executed once at the startup. Could be useful to initialize some variables.")
+    required(:each).filled(:string).description("Code executed for each event")
+  end
 
   def initialize()
     super("ruby")

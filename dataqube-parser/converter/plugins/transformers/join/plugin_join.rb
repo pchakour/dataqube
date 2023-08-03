@@ -3,30 +3,35 @@ require_relative '../../../core/transformer'
 class Join < Dataqube::Transformer
   plugin_license "community"
   plugin_desc "Join events"
-  plugin_details """
 
-  """
+  rule_tag = config_schema do
+    required(:rule_tag).filled(:string).description("Tag of a rule")
+  end
 
+  predicate = config_schema do
+    required(:predicate).filled(:string).description("Predicate")
+  end
 
-  rule_tag_type = { :type => :string, :desc => 'Check if an event is tagged by the rule_tag' }
+  plugin_config do
+    required(:by)
+    .filled(:string)
+    .description("Key shared between events to join. This field is a ruby instruction.")
 
-  desc "Key shared between events to join. This field is a ruby instruction."
-  config_param :by, :string
-  desc "Determine the beginning of a join section"
-  config_param :from, { :rule_tag => rule_tag_type }
-  desc "Determine the end of a join section"
-  config_param :until, { :rule_tag => rule_tag_type }
-  desc "What to do to join events"
-  config_param :using, {
-    :when => {
-      :type => {
-        :rule_tag => rule_tag_type,
-        :predicate => { :type => :string, :desc => 'Use Ruby predicate' }
-      },
-    },
-    :code => { :type => :string, :desc => 'Ruby code to execute when conditions are met' }
-  },
-  multi: true
+    required(:from)
+    .hash(rule_tag)
+    .description("Determine the beginning of a join section")
+
+    required(:until)
+    .hash(rule_tag)
+    .description("Determine the end of a join section")
+
+    required(:using)
+    .array(:hash) do
+      required(:when).hash(rule_tag | predicate).description("When apply the code")
+      required(:code).filled(:string).description("Code to execute")
+    end
+    .description("What to do to join events")
+  end
 
   def initialize()
     super("join")

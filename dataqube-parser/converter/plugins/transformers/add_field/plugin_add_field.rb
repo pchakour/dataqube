@@ -39,10 +39,10 @@ class AddField < Dataqube::Transformer
 </CodeGroup>
   """
 
-  desc "New field name"
-  config_param :name, :string
-  desc "New value field"
-  config_param :value, :string, { field_interpretation: true }
+  plugin_config do
+    required(:name).filled(:string).description("New field name")
+    required(:value).filled(:string).isInterpreted.description("New value field")
+  end
 
   def initialize()
     super("add_field")

@@ -23,7 +23,7 @@ rules:
       - type: grok
         pattern: "%{TIMESTAMP_ISO8601:timestamp} Los Angeles temperature: %{NUMBER:temperature:int}"
     assert:
-      - type: lower
+      - type: less_than
         source: temperature 
         value: 70
 

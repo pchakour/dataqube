@@ -1,6 +1,7 @@
 require_relative '../errors/missing_parameter'
 require_relative '../errors/bad_parameter_type'
 require_relative '../errors/unknown_parameter'
+require_relative './config_schema'
 
 $last_description = nil
 $config_param_register = {}
@@ -30,9 +31,15 @@ def plugin_config_init(type, name)
       :license => 'unknown',
       :description => nil,
       :details => nil,
-      :params => []
+      :params => [],
+      :schema => nil,
     }
   end
+end
+
+def plugin_config(&block)
+  plugin_config_init(plugin_type, plugin_name)
+  $config_param_register[plugin_type][plugin_name][:schema] = config_schema(&block).json_schema.to_json
 end
 
 def config_param(name, type, options = nil)

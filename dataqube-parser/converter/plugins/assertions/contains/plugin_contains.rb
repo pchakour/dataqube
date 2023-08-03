@@ -58,10 +58,15 @@ class Contains < Dataqube::Assertion
 </CodeGroup>
 """
 
-  desc "Source field to check. The field must be an array."
-  config_param :source, :string
-  desc "Value to find in the array"
-  config_param :value, :any, { field_interpretation: true }
+  plugin_config do
+    required(:source)
+      .filled(:string)
+      .description("Source field to check. The field must be an array.")
+
+    required(:value) { int? | str? }
+      .description("Value to find in the array")
+      .isInterpreted
+  end
 
   def initialize()
     super("contains")

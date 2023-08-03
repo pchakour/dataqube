@@ -1,7 +1,9 @@
 # kv <Badge type='tip' text='community' vertical='top' />
 
 ## Description
+
 Extract data using key value pattern
+
 
 
 <CodeGroup>
@@ -42,35 +44,28 @@ Extract data using key value pattern
   
 
 ## List of parameters
-| Parameter | Description | Required | Default |
-|---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
-| [source](#source) | Source field to use for the extraction | Yes | null |
 
-## Common parameters
-### tag
-<br/>
-<Badge type=warning text=optional vertical=bottom />
-
-List of tag to add if the plugin is well executed
-- Value type is `string`
-- The default is `null`
-- [Multi mode](#) is supported by this parameter
+| Parameter | Description | Type | Default | Required |
+|---|---|---|---|---|
+| [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
+| [source](#source) | Source field to use for the extraction | <code>string</code> |  | Yes |
 
 ### when
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Ruby predicate to indicate when execute this plugin
-- Value type is `string`
+
+- Value type is <code>string</code>
 - The default is `null`
 
-## Plugin parameters
 ### source
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 Source field to use for the extraction
-- Value type is `string`
+
+- Value type is <code>string</code>
 

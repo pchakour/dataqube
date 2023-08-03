@@ -9,8 +9,9 @@ Limitation only one by tag and at the end of the transform section
 :::
 """
 
-  desc "Field to split in several events. You can specify an array"
-  config_param :source, :string, multi: true
+  plugin_config do
+    required(:source).array(:string).description("Field to split in several events. You can specify an array")
+  end
 
   def initialize()
     super("split")

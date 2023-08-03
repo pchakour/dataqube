@@ -1,8 +1,8 @@
 require_relative '../../../core/assertion'
 
-class Lower < Dataqube::Assertion
+class LessThan < Dataqube::Assertion
   plugin_license "community"
-  plugin_desc "Check if a field value is lower than a specified value"
+  plugin_desc "Check if a field value is less than a specified value"
   plugin_details """
 <CodeGroup>
   <CodeGroupItem title='CONFIG'>
@@ -13,7 +13,7 @@ class Lower < Dataqube::Assertion
     - type: grok
       pattern: \"Los Angeles max temperature is %{NUMBER:temperature:int}\"
   assert:
-    - type: lower
+    - type: less_than
       source: temperature
       value: 70
 ```
@@ -39,7 +39,7 @@ class Lower < Dataqube::Assertion
   \"_dataqube.quality\": [
     {
       \"tag\": \"EXPECTED_TEMPERATURE\",
-      \"message\": \"Fields temperature must be lower than 70\",
+      \"message\": \"Fields temperature must be less than 70\",
       \"severity\": \"info\",
       \"expected\": \"70\",
       \"value\": \"71\",
@@ -54,13 +54,15 @@ class Lower < Dataqube::Assertion
 </CodeGroup>
   """
 
-  desc "Source field to check"
-  config_param :source, :string, multi: true
-  desc "Value to compare"
-  config_param :value, :any, { field_interpretation: true }
+  plugin_config do
+    required(:source).array(:string).description("Source field to check")
+    required(:value){ array? & each{ int? | str?}}
+      .isInterpreted
+      .description("Value to compare")
+  end
 
   def initialize()
-    super("lower")
+    super("less_than")
   end
 
   def once(rule_tag, params)
@@ -79,15 +81,15 @@ class Lower < Dataqube::Assertion
       sources.each do |field|
         if '#{params[:expected]}' == 'success'
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} must be lower than #{escape(value)}"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} must be less than #{escape(value)}"}')
             .expect(record[field])
-            .toBe(#{value})
+            .toBeLessThan(#{value})
         else
           quality!(record)
-            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} must not be lower than #{escape(value)}"}')
+            .rule('#{rule_tag}', '#{params[:severity]}', '#{params[:message] || "Fields #{params[:source].to_s} must not be less than #{escape(value)}"}')
             .expect(record[field])
             .not
-            .toBe(#{value})
+            .toBeLessThan(#{value})
         end
       end
     }

@@ -54,10 +54,12 @@ class Eq < Dataqube::Assertion
 </CodeGroup>
   """
 
-  desc "Source field to check"
-  config_param :source, :string, multi: true
-  desc "Value to compare"
-  config_param :value, :any, { field_interpretation: true }
+  plugin_config do
+    required(:source).filled(:string).description("Source field to check")
+    required(:value){ array? & each { str? | int? } }
+    .isInterpreted
+    .description("Value to compare")
+  end
 
   def initialize()
     super("eq")

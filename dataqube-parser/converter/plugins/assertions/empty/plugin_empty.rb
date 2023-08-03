@@ -60,8 +60,9 @@ class Empty < Dataqube::Assertion
 </CodeGroup>
 """
 
-  desc "Source field to check"
-  config_param :source, :string, multi: true
+  plugin_config do
+    required(:source).array(:str?).description("Source field to check")
+  end
 
   def initialize()
     super("empty")

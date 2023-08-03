@@ -1,59 +1,56 @@
 # list <Badge type='tip' text='community' vertical='top' />
 
 ## Description
+
 Parse a serialized list
 
 ## List of parameters
-| Parameter | Description | Required | Default |
-|---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
-| [source](#source) | Source field to parse | No | message |
-| [target](#target) | Target field to store parsed data.<br/>By default, the parsed data will be merged with the target field.<br/>If no target is provided, the data will be merge with the event. | No | null |
-| [overwrite](#overwrite) | Change the default behavior that merge parsed data with target. True will replace the target field value by the parsed data | No | false |
 
-## Common parameters
-### tag
-<br/>
-<Badge type=warning text=optional vertical=bottom />
-
-List of tag to add if the plugin is well executed
-- Value type is `string`
-- The default is `null`
-- [Multi mode](#) is supported by this parameter
+| Parameter | Description | Type | Default | Required |
+|---|---|---|---|---|
+| [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
+| [source](#source) | Source field to parse | <code>string</code> |  | Yes |
+| [target](#target) | Target field to store parsed data.<br/>  By default, the parsed data will be merged with the target fiel... | <code>string</code> | `null` | No |
+| [overwrite](#overwrite) | Change the default behavior that merge parsed data with target. True will replace the target field v... | <code>boolean</code> | `null` | No |
 
 ### when
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Ruby predicate to indicate when execute this plugin
-- Value type is `string`
+
+- Value type is <code>string</code>
 - The default is `null`
 
-## Plugin parameters
 ### source
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 Source field to parse
-- Value type is `string`
-- The default is `message`
+
+- Value type is <code>string</code>
 
 ### target
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Target field to store parsed data.
-By default, the parsed data will be merged with the target field.
-If no target is provided, the data will be merge with the event.
-- Value type is `string`
+  By default, the parsed data will be merged with the target field.
+  If no target is provided, the data will be merge with the event.
+
+- Value type is <code>string</code>
 - The default is `null`
 
 ### overwrite
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Change the default behavior that merge parsed data with target. True will replace the target field value by the parsed data
-- Value type is `boolean`
-- The default is `false`
+
+- Value type is <code>boolean</code>
+- The default is `null`
 

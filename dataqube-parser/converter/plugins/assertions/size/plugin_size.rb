@@ -59,12 +59,19 @@ class Size < Dataqube::Assertion
 </CodeGroup>
 """
 
-  desc "Source field to check. The field must be an array."
-  config_param :source, :string
-  desc "Min value"
-  config_param :min, :integer, default: 0
-  desc "Max value"
-  config_param :max, :integer, default: 0
+  plugin_config do
+    required(:source)
+    .filled(:string)
+    .description("Source field to check. The field must be an array.")
+      
+    required(:min)
+      .filled(:integer)
+      .description("Min value")
+
+    required(:max)
+      .filled(:integer)
+      .description("Max value")
+  end
 
   def initialize()
     super("size")

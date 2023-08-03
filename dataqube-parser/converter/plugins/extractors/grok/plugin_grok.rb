@@ -42,51 +42,56 @@ This plugin assert an error if the extraction process failed depending on the ma
 </CodeGroup>
 """
 
-  desc "Source field on which apply the grok pattern"
-  config_param :source, :string, default: 'message'
-  desc """
+  plugin_config do
+    optional(:source)
+      .filled(:string)
+      .default('message')
+      .description("Source field on which apply the grok pattern")
+
+    required(:pattern)
+      .array(:string)
+      .description("""
 Pattern grok to use. You can specify several patterns to check.
 
 The pattern can use typing for a field to convert the value to a string, an integer or a float.
 
 Example to convert as an integer:
 
-```
-  %{NUMBER:name:int}
-```
+`%{NUMBER:name:int}`
 
 or
 
-```
-  %{NUMBER:name:integer}
-```
+`%{NUMBER:name:integer}`
 
 The field support structure naming to create structured fields in your event.
 
-```
-  %{LOGLEVEL:[log][level]}
-```
+`%{LOGLEVEL:[log][level]}`
 
 will create the following event
 
-```
-  { log: { level: 'info' }}
-```
+`{ log: { level: 'info' }}`
 
 The field name support also the use of `@metadata` structure to store temporary data.
 `@metadata` are kept if the event has an assertion.
 
-```
-  %{NUMBER:[@metadata][name]}
-```
-"""
-  config_param :pattern, :string, { multi: true }
-  desc "Severity error"
-  config_param :severity, ['info', 'major', 'minor', 'fatal'], default: 'info'
-  desc "Indicate if you expect the check failed or succeed"
-  config_param :expected, ['failure', 'success'], default: 'success'
-  desc "Change the default merge behavior with overwriting"
-  config_param :overwrite, :boolean, default: false
+`%{NUMBER:[@metadata][name]}`
+        """)
+
+    optional(:severity)
+      .filled(:string, included_in?: ['info', 'major', 'minor', 'fatal'])
+      .default('info')
+      .description("Severity error")
+
+    optional(:expected)
+      .filled(:string, included_in?: ['failure', 'success'])
+      .default('success')
+      .description("Indicate if you expect the check failed or succeed")
+
+    optional(:overwrite)
+      .filled(:bool)
+      .default(false)
+      .description("Change the default merge behavior with overwriting")
+  end
 
   def initialize()
     super("grok")

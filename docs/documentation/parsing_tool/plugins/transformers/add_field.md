@@ -1,7 +1,9 @@
 # add_field <Badge type='tip' text='community' vertical='top' />
 
 ## Description
+
 This plugin allow you to add a new field in your record
+
 
 <CodeGroup>
   <CodeGroupItem title='CONFIG'>
@@ -39,44 +41,39 @@ This plugin allow you to add a new field in your record
   
 
 ## List of parameters
-| Parameter | Description | Required | Default |
-|---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
-| [name](#name) | New field name | Yes | null |
-| [value](#value) | New value field | Yes | null |
 
-## Common parameters
-### tag
-<br/>
-<Badge type=warning text=optional vertical=bottom />
-
-List of tag to add if the plugin is well executed
-- Value type is `string`
-- The default is `null`
-- [Multi mode](#) is supported by this parameter
+| Parameter | Description | Type | Default | Required |
+|---|---|---|---|---|
+| [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
+| [name](#name) | New field name | <code>string</code> |  | Yes |
+| [value](#value) | New value field | <code>string</code> |  | Yes |
 
 ### when
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Ruby predicate to indicate when execute this plugin
-- Value type is `string`
+
+- Value type is <code>string</code>
 - The default is `null`
 
-## Plugin parameters
 ### name
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 New field name
-- Value type is `string`
+
+- Value type is <code>string</code>
 
 ### value
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 New value field
-- Value type is `string`
+
+- Value type is <code>string</code>
 - [Field interpretation](#) is supported for this parameter
 

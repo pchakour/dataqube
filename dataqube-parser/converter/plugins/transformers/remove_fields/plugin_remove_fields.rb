@@ -40,8 +40,9 @@ class RemoveFields < Dataqube::Transformer
 </CodeGroup>
   """
 
-  desc "Field to remove. Accept an array to delete several fields at once"
-  config_param :source, :string, multi: true
+  plugin_config do
+    required(:source).array(:string).description("Field to remove. Accept an array to delete several fields at once")
+  end
 
   def initialize()
     super("remove_fields")

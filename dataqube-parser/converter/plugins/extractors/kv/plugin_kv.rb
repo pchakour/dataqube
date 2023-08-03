@@ -42,8 +42,9 @@ class Kv < Dataqube::Extractor
 
   """
 
-  desc "Source field to use for the extraction"
-  config_param :source, :string
+  plugin_config do
+    required(:source).filled(:string).description("Source field to use for the extraction")
+  end
 
   def initialize()
     super("kv")

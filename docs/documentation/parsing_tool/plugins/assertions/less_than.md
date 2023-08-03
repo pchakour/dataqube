@@ -1,29 +1,22 @@
-# empty <Badge type='tip' text='community' vertical='top' />
+# less_than <Badge type='tip' text='community' vertical='top' />
 
 ## Description
 
-Check if a field value is empty
+Check if a field value is less than a specified value
 
 
-  Empty `string`, `array` and the value `nil` are consider empty by the plugin.
-
-  <CodeGroup>
+<CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-12}
-- tag: EXTRACT_TEMPERATURES
+```yaml{6-8}
+- tag: EXPECTED_TEMPERATURE
   extract:
     - type: grok
-      pattern: "Los Angeles temperatures: %{GREEDYDATA:temperatures}"
-  transform:
-    - type: list
-      source: temperatures
-      target: temperatures
-      overwrite: true
+      pattern: "Los Angeles max temperature is %{NUMBER:temperature:int}"
   assert:
-    - type: empty
-      source: temperatures
-      expected: failure # We want the temperatures field not empty
+    - type: less_than
+      source: temperature
+      value: 70
 ```
 
   </CodeGroupItem>
@@ -31,27 +24,28 @@ Check if a field value is empty
 
 ```json
 {
-  "message": "Los Angeles temperatures: []"
+  "message": "Los Angeles max temperature is 71"
 }
 ```
 
   </CodeGroupItem>
   <CodeGroupItem title='OUTPUT'>
 
-```json{5-15}
+```json{6-16}
 {
-  "temperatures": [],
-  "message": "Los Angeles temperatures: []",
-  "_dataqube.tags": ["EXTRACT_TEMPERATURES"],
+  "temperature": 68,
+  "expected": 50,
+  "message": "Los Angeles max temperature is 71",
+  "_dataqube.tags": ["EXPECTED_TEMPERATURE"],
   "_dataqube.quality": [
     {
-      "tag": "EXTRACT_TEMPERATURES",
-      "message": "Fields temperatures are empty",
+      "tag": "EXPECTED_TEMPERATURE",
+      "message": "Fields temperature must be less than 70",
       "severity": "info",
-      "expected": "!["", nil, []]",
-      "value": "[]",
+      "expected": "70",
+      "value": "71",
       "status": "unresolved",
-      "id": "803471cc-9b1b-4e15-96c8-1979ec4260fe"
+      "id": "1dd3d1fa-46eb-4ef0-b02f-1a30f850b7ec"
     }
   ]
 }
@@ -59,7 +53,7 @@ Check if a field value is empty
 
   </CodeGroupItem>
 </CodeGroup>
-
+  
 
 ## List of parameters
 
@@ -70,6 +64,7 @@ Check if a field value is empty
 | [severity](#severity) | Severity of the assertion | <code>string</code> | info | No |
 | [expected](#expected) | Indicate if you expect the check failed or succeed | <code>string</code> | success | No |
 | [source](#source) | Source field to check | <code>array&lt;string&gt;</code> |  | Yes |
+| [value](#value) | Value to compare | <code>array&lt;integer&#124;string&gt;</code> |  | Yes |
 
 ### when
 
@@ -119,4 +114,14 @@ Indicate if you expect the check failed or succeed
 Source field to check
 
 - Value type is <code>array&lt;string&gt;</code>
+
+### value
+
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
+Value to compare
+
+- Value type is <code>array&lt;integer&#124;string&gt;</code>
+- [Field interpretation](#) is supported for this parameter
 

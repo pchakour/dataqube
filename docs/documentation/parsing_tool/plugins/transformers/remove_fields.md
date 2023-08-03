@@ -1,7 +1,9 @@
 # remove_fields <Badge type='tip' text='community' vertical='top' />
 
 ## Description
+
 Remove fields from an event
+
 
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
@@ -40,36 +42,28 @@ Remove fields from an event
   
 
 ## List of parameters
-| Parameter | Description | Required | Default |
-|---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
-| [source](#source) | Field to remove. Accept an array to delete several fields at once | Yes | null |
 
-## Common parameters
-### tag
-<br/>
-<Badge type=warning text=optional vertical=bottom />
-
-List of tag to add if the plugin is well executed
-- Value type is `string`
-- The default is `null`
-- [Multi mode](#) is supported by this parameter
+| Parameter | Description | Type | Default | Required |
+|---|---|---|---|---|
+| [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
+| [source](#source) | Field to remove. Accept an array to delete several fields at once | <code>array&lt;string&gt;</code> |  | Yes |
 
 ### when
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Ruby predicate to indicate when execute this plugin
-- Value type is `string`
+
+- Value type is <code>string</code>
 - The default is `null`
 
-## Plugin parameters
 ### source
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 Field to remove. Accept an array to delete several fields at once
-- Value type is `string`
-- [Multi mode](#) is supported by this parameter
+
+- Value type is <code>array&lt;string&gt;</code>
 

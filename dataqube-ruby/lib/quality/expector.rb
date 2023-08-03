@@ -92,6 +92,22 @@ class Expector
   end
 
   def toBeLessThan(number)
+    @expected = "#{number}"
+    condition =  @value < number
+    if (@not)
+      condition = !condition
+      @expected = "!#{@expected}"
+    end
+
+    if (!condition)
+      stamp()
+      error = "Expected #{@value} to #{@not ? 'not ' : ''}be less than #{number}"
+      if @rescue_error
+        return @error
+      else
+        raise error
+      end
+    end
   end
 
   def toBeGreaterThanOrEqual(number)

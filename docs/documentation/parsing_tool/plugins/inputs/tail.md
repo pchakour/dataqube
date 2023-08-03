@@ -1,7 +1,9 @@
 # tail <Badge type='tip' text='community' vertical='top' />
 
 ## Description
+
 Tail files from a specific path
+
 
 This plugin will add the file path to your event in a field named `filepath`.
 
@@ -36,48 +38,39 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
   
 
 ## List of parameters
-| Parameter | Description | Required | Default |
-|---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
-| [path](#path) | Path of fields to read. Wildcards are allowed to target multiple files | Yes | null |
-| [format](#format) | Decoding format of files. 'auto' use extension files to determine the right format | No | auto |
 
-## Common parameters
-### tag
-<br/>
-<Badge type=warning text=optional vertical=bottom />
-
-List of tag to add if the plugin is well executed
-- Value type is `string`
-- The default is `null`
-- [Multi mode](#) is supported by this parameter
+| Parameter | Description | Type | Default | Required |
+|---|---|---|---|---|
+| [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
+| [path](#path) | Path of fields to read. Wildcards are allowed to target multiple files | <code>string</code> |  | Yes |
+| [format](#format) | Decoding format of files. 'auto' use extension files to determine the right format | <code>string</code> | auto | No |
 
 ### when
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Ruby predicate to indicate when execute this plugin
-- Value type is `string`
+
+- Value type is <code>string</code>
 - The default is `null`
 
-## Plugin parameters
 ### path
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 Path of fields to read. Wildcards are allowed to target multiple files
-- Value type is `string`
+
+- Value type is <code>string</code>
 
 ### format
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Decoding format of files. 'auto' use extension files to determine the right format
-- Value type is `[
-  "auto",
-  "raw",
-  "json"
-]`
+
+- Value type is <code>string</code>
 - The default is `auto`
 

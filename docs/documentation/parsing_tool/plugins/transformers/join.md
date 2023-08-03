@@ -1,101 +1,124 @@
 # join <Badge type='tip' text='community' vertical='top' />
 
 ## Description
+
 Join events
 
-
-  
-
 ## List of parameters
-| Parameter | Description | Required | Default |
-|---|---|---|---|
-| [tag](#tag) | List of tag to add if the plugin is well executed | No | null |
-| [when](#when) | Ruby predicate to indicate when execute this plugin | No | null |
-| [by](#by) | Key shared between events to join. This field is a ruby instruction. | Yes | null |
-| [from](#from) | Determine the beginning of a join section | Yes | null |
-| [until](#until) | Determine the end of a join section | Yes | null |
-| [using](#using) | What to do to join events | Yes | null |
 
-## Common parameters
-### tag
-<br/>
-<Badge type=warning text=optional vertical=bottom />
-
-List of tag to add if the plugin is well executed
-- Value type is `string`
-- The default is `null`
-- [Multi mode](#) is supported by this parameter
+| Parameter | Description | Type | Default | Required |
+|---|---|---|---|---|
+| [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
+| [by](#by) | Key shared between events to join. This field is a ruby instruction. | <code>string</code> |  | Yes |
+| [from](#from) | Determine the beginning of a join section | <code>object</code> |  | Yes |
+| [until](#until) | Determine the end of a join section | <code>object</code> |  | Yes |
+| [using](#using) | What to do to join events | <code>array&lt;object&gt;</code> |  | Yes |
 
 ### when
-<br/>
-<Badge type=warning text=optional vertical=bottom />
 
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
 Ruby predicate to indicate when execute this plugin
-- Value type is `string`
+
+- Value type is <code>string</code>
 - The default is `null`
 
-## Plugin parameters
 ### by
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 Key shared between events to join. This field is a ruby instruction.
-- Value type is `string`
+
+- Value type is <code>string</code>
 
 ### from
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 Determine the beginning of a join section
 
-Value type is an object composed by the following properties: 
-#### rule_tag
+- Value type is <code>object</code>
+
+This object contains the following properties:
+
+#### from.rule_tag
 
 <br/>
-<Badge type=tip text=required vertical=bottom />
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
+Tag of a rule
 
-  Check if an event is tagged by the rule_tag
-
-  - Value type is `null`
+- Value type is <code>string</code>
 
 ### until
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 Determine the end of a join section
 
-Value type is an object composed by the following properties: 
-#### rule_tag
+- Value type is <code>object</code>
+
+This object contains the following properties:
+
+#### until.rule_tag
 
 <br/>
-<Badge type=tip text=required vertical=bottom />
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
+Tag of a rule
 
-  Check if an event is tagged by the rule_tag
-
-  - Value type is `null`
+- Value type is <code>string</code>
 
 ### using
-<br/>
-<Badge type=tip text=required vertical=bottom />
 
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
 What to do to join events
 
-Value type is an object composed by the following properties: 
-#### code
+- Value type is <code>array&lt;object&gt;</code>
+
+This array contains objects with the following properties:
+
+#### using[].when
 
 <br/>
-<Badge type=tip text=required vertical=bottom />
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
+When apply the code
 
-  Ruby code to execute when conditions are met
+- Value type is <code>object</code>
 
-  - Value type is `null`
-#### when
+This object contains **any of** the following properties:
+
+#### using[].when.rule_tag
 
 <br/>
-<Badge type=tip text=required vertical=bottom />
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
+Tag of a rule
 
-  null
+- Value type is <code>string</code>
 
-  - Value type is `null`
-- [Multi mode](#) is supported by this parameter
+#### using[].when.predicate
+
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
+Predicate
+
+- Value type is <code>string</code>
+
+#### using[].code
+
+<br/>
+<Badge type='tip' text='required' vertical='bottom' />
+<br/><br/>
+Code to execute
+
+- Value type is <code>string</code>
 
