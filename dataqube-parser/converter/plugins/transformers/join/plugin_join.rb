@@ -27,7 +27,7 @@ class Join < Dataqube::Transformer
 
     required(:using)
     .array(:hash) do
-      required(:when).hash(rule_tag).description("When apply the code")
+      required(:when).hash(rule_tag | predicate).description("When apply the code")
       required(:code).filled(:string).description("Code to execute")
     end
     .description("What to do to join events")

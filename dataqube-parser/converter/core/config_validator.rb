@@ -123,12 +123,12 @@ end
 
 def apply_defaults_next(schema_type, config, key)
   if schema_type.type.class == Dry::Types::Constrained
-    apply_defaults_next(p.type, config, key)
+    apply_defaults_next(schema_type.type, config, key)
   elsif schema_type.type.class == Dry::Types::Array::Member
-    apply_defaults_next(p.type.member, config, key)
+    apply_defaults_next(schema_type.type.member, config, key)
   elsif schema_type.type.class == Dry::Types::Schema
     schema_key_map = {}
-    schema_type.keys.each { |t, e| schema_key_map = schema_key_map.merge({ t.name => t }) }
+    schema_type.keys.each { |subkey| schema_key_map = schema_key_map.merge({ subkey.name => subkey }) }
     if !config[key]
       config[key] = {}
     end
