@@ -49,7 +49,7 @@ This plugin assert an error if the extraction process failed depending on the ma
 |---|---|---|---|---|
 | [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
 | [source](#source) | Source field on which apply the grok pattern | <code>string</code> | message | No |
-| [pattern](#pattern) | <br/>Pattern grok to use. You can specify several patterns to check.<br/><br/>The pattern can use typing for a f... | <code>array&lt;string&gt;</code> |  | Yes |
+| [pattern](#pattern) | <br/>Pattern grok to use. You can specify several patterns to check.<br/><br/>The pattern can use typing for a f... | <code>any of ["string", "array"]</code> |  | Yes |
 | [severity](#severity) | Severity error | <code>string</code> | info | No |
 | [expected](#expected) | Indicate if you expect the check failed or succeed | <code>string</code> | success | No |
 | [overwrite](#overwrite) | Change the default merge behavior with overwriting | <code>boolean</code> | `null` | No |
@@ -106,7 +106,7 @@ The field name support also the use of `@metadata` structure to store temporary 
 `%{NUMBER:[@metadata][name]}`
         
 
-- Value type is <code>array&lt;string&gt;</code>
+- Value type is <code>any of ["string", "array"]</code>
 
 ### severity
 

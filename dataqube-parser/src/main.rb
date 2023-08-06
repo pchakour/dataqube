@@ -56,8 +56,18 @@ if options[:doctext]
   exit
 end
 
+def deep_delete_key(hash, key_to_delete)
+  hash.each do |key, value|
+    if value.is_a?(Hash)
+      deep_delete_key(value, key_to_delete)
+    end
+
+    hash.delete(key) if key == key_to_delete
+  end
+end
+
 if options[:docjson]
-  print  $config_param_register.to_json
+  print  deep_delete_key($config_param_register.dup, :schema_raw).to_json
   exit
 end
 

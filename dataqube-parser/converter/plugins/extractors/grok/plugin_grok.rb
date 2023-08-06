@@ -48,8 +48,7 @@ This plugin assert an error if the extraction process failed depending on the ma
       .default('message')
       .description("Source field on which apply the grok pattern")
 
-    required(:pattern)
-      .array(:string)
+    required(:pattern){ filled? & (str? | (array? & str?)) }
       .description("""
 Pattern grok to use. You can specify several patterns to check.
 

@@ -5,7 +5,7 @@ class Join < Dataqube::Transformer
   plugin_desc "Join events"
 
   rule_tag = config_schema do
-    required(:rule_tag).filled(:string).description("Tag of a rule")
+    optional(:rule_tag).filled(:string).default('toto').description("Tag of a rule")
   end
 
   predicate = config_schema do
@@ -27,7 +27,7 @@ class Join < Dataqube::Transformer
 
     required(:using)
     .array(:hash) do
-      required(:when).hash(rule_tag | predicate).description("When apply the code")
+      required(:when).hash(rule_tag).description("When apply the code")
       required(:code).filled(:string).description("Code to execute")
     end
     .description("What to do to join events")

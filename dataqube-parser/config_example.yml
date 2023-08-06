@@ -18,14 +18,26 @@ outputs:
   #   cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
 
 rules:
+  # - tag: MAX_TEMPERATURE
+  #   extract:
+  #     - type: grok
+  #       pattern: "%{TIMESTAMP_ISO8601:timestamp} Los Angeles temperature: %{NUMBER:temperature:int}"
+  #   assert:
+  #     - type: less_than
+  #       source: temperature
+  #       value: 70
   - tag: MAX_TEMPERATURE
-    extract:
-      - type: grok
-        pattern: "%{TIMESTAMP_ISO8601:timestamp} Los Angeles temperature: %{NUMBER:temperature:int}"
-    assert:
-      - type: less_than
-        source: temperature 
-        value: 70
+    transform:
+      - type: join
+        by: 'toto'
+        from: 
+          te: t
+        until:
+          te: t
+        using:
+          - when: 
+              predicate: "true"
+            code: record['toto'] = toto
 
 #     transform:
 #       - type: list

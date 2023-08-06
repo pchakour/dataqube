@@ -55,8 +55,8 @@ class LessThan < Dataqube::Assertion
   """
 
   plugin_config do
-    required(:source).array(:string).description("Source field to check")
-    required(:value){ array? & each{ int? | str?}}
+    required(:source){(array? & each { str? }) | str?}.description("Source field to check")
+    required(:value){int? | str?}
       .isInterpreted
       .description("Value to compare")
   end

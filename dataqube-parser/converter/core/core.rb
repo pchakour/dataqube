@@ -31,14 +31,15 @@ class Core
   def convert(config_path, injection_id, rules)
     @config.start(config_path, injection_id, rules)
     config_validate_and_apply_defaults(@config)
-    convertor_engine = FluentdConvertor.new(
-      @inputs_loader,
-      @outputs_loader,
-      @extractors_loader,
-      @transformers_loader,
-      @assertions_loader
-    )
-    conversion = convertor_engine.convert(@config)
+    # convertor_engine = FluentdConvertor.new(
+    #   @inputs_loader,
+    #   @outputs_loader,
+    #   @extractors_loader,
+    #   @transformers_loader,
+    #   @assertions_loader
+    # )
+    # conversion = convertor_engine.convert(@config)
+    conversion = ""
     return conversion
   end
 end

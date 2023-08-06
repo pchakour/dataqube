@@ -60,7 +60,8 @@ export default defineUserConfig({
             link: '/documentation/getting_started',
           },
           {
-            text: 'Dataqube App',
+            text: 'Fluentd plugin',
+            link: '/documentation/fluentd_plugin'
           },
           {
             text: 'Parsing tool',
@@ -72,6 +73,9 @@ export default defineUserConfig({
               },
               ...pluginsSidebarItems,
             ]
+          },
+          {
+            text: 'Dataqube App',
           }
         ],
       }]

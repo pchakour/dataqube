@@ -25,6 +25,6 @@ class PluginsLoader
       return @plugins[plugin_name]
     end
 
-    fail UnknownPluginName, 'Unknown plugin named ' << plugin_name
+    fail UnknownPluginName, 'Unknown plugin named "' + plugin_name.to_s + '"'
   end
 end

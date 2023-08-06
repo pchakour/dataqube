@@ -1,20 +1,5 @@
 require 'dry-schema'
 
-# module Dry
-#   module Schema
-#     module Extensions
-#       module Key
-#         module DSL
-#           def description(value)
-#             @__meta__ ||= {}
-#             @__meta__[:description] = value
-#           end
-#         end
-#       end
-#     end
-#   end
-# end
-
 module Dry
   module Schema
     module Macros
@@ -36,8 +21,8 @@ module Dry
   end
 end
 
-# Include your custom extension in the Dry::Schema class
 Dry::Schema.load_extensions(:json_schema)
+Dry::Schema.load_extensions(:info)
 
 module Dry
   module Schema
@@ -107,7 +92,13 @@ module Dry
   end
 end
 
-
 def config_schema(&block)
   Dry::Schema.JSON(&block)
+end
+
+SYSTEM_SCHEMA = config_schema do
+  optional(:autostop).filled(:hash).schema do
+    optional(:enabled).filled(:bool).default(true)
+    optional(:timeout).filled(:integer).default(20)
+  end
 end

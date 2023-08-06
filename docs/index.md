@@ -13,10 +13,10 @@ actions:
 features:
 - title: Parsing tool
   details: You can extract, transform and assert your data with our parsing tool under Apache 2 license easily extendable
+- title: Fluentd plugin
+  details: Your already set up a fluentd parser for your data ? You can use our fluentd plugin to write ruby assertions.
 - title: Dataqube app
   details: Use our free Dataqube app to create projects, quality gate and rules. Explore the analysis result to fix error until to meet quality requirements
-- title: Enterprise license
-  details: Get your enterprise license to get dedicated support and more Dataqube app features
 footer: FOOTER
 ---
 

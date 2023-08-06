@@ -24,6 +24,16 @@ class Config
 
   private
 
+  def deep_symbolize_keys(hash)
+    hash.each_with_object({}) do |(key, value), result|
+      new_key = key.is_a?(String) ? key.to_sym : key
+      new_value = value
+      new_value = deep_symbolize_keys(value) if value.is_a?(Hash)
+      new_value = value.map { |v| v.is_a?(Hash) ? deep_symbolize_keys(v) : v } if value.is_a?(Array)
+      result[new_key] = new_value
+    end
+  end
+
   def  resolveIncludes() 
     if @content.key?('rules')
       value_to_replace = []
@@ -61,5 +71,7 @@ class Config
     if !@content.key?('rules')
       @content['rules'] = []
     end
+
+    @content = deep_symbolize_keys(@content)
   end
 end

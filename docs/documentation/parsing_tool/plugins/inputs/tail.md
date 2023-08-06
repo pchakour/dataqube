@@ -42,6 +42,7 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
 | Parameter | Description | Type | Default | Required |
 |---|---|---|---|---|
 | [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
+| [tag](#tag) | Which tag to apply to your input data | <code>string</code> | `null` | No |
 | [path](#path) | Path of fields to read. Wildcards are allowed to target multiple files | <code>string</code> |  | Yes |
 | [format](#format) | Decoding format of files. 'auto' use extension files to determine the right format | <code>string</code> | auto | No |
 
@@ -51,6 +52,16 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
 <Badge type='warning' text='optional' vertical='bottom' />
 <br/><br/>
 Ruby predicate to indicate when execute this plugin
+
+- Value type is <code>string</code>
+- The default is `null`
+
+### tag
+
+<br/>
+<Badge type='warning' text='optional' vertical='bottom' />
+<br/><br/>
+Which tag to apply to your input data
 
 - Value type is <code>string</code>
 - The default is `null`
