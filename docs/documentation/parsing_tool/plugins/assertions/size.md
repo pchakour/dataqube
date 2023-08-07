@@ -8,7 +8,7 @@ Check if the size of an array is include between a min and a max. Min and max ar
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-13}
+```yaml{11-14}
 - tag: EXTRACT_TEMPERATURES
   extract:
     - type: grok

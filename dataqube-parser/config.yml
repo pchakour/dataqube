@@ -1,23 +1,30 @@
 autostop:
-  enabled: true
-  timeout: 2
+  enabled: false
+  timeout: 20
 
 inputs:
-  - type: tail
-    #path: /home/hawk/development/dataqube/dataqube-parser/test2.log
-    path: /home/hawk/development/dataqube/dataqube-parser/test.log
-    tag: loc_tag
+  - type: tcp
+    port: 10200
+    bind: 0.0.0.0
+    tag: tcp.events
+  # - type: tail
+  #   path: /home/hawk/development/dataqube/dataqube-parser/test.log
+  #   tag: LOG
+  # - type: tail
+  #   #path: /home/hawk/development/dataqube/dataqube-parser/test2.log
+  #   path: /home/hawk/development/dataqube/dataqube-parser/test.log
+  #   tag: loc_tag
 
 outputs:
   # - type: stdout
-  - type: dataqube
+  - type: stdout
   # - type: elasticsearch
   #   scheme: https
   #   user: admin
   #   password: admin
   #   cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
 
-rules:
+# rules:
   # - tag: PATTERN
   #   extract:
   #     - type: pattern_thales
@@ -36,18 +43,18 @@ rules:
   #       expected: failure
   #       severity: fatal
 
-  - tag: LOG_LEVEL
-    extract:
-      - type: grok
-        pattern: '%{LOGLEVEL:[log][level]}'
-        source: message
-        target: log.level
-    assert:
-      - type: empty
-        message: No log level found
-        source: log.level
-        expected: failure
-        severity: major
+  # - tag: LOG_LEVEL
+  #   extract:
+  #     - type: grok
+  #       pattern: '%{LOGLEVEL:[log][level]}'
+  #       source: message
+  #       target: log.level
+  #   assert:
+  #     - type: empty
+  #       message: No log level found
+  #       source: log.level
+  #       expected: failure
+  #       severity: major
 
   # - tag: LANGUAGE
   #   extract:

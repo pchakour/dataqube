@@ -10,7 +10,7 @@ class FluentdConvertor
   def convert(config)
     conversion = ""
 
-    config.content["inputs"].each do |input|
+    config.content[:inputs].each do |input|
       conversion << convert_input(input)
     end
 
@@ -31,7 +31,7 @@ class FluentdConvertor
       </filter>
     }
 
-    config.content["rules"].each do |rule|
+    config.content[:rules].each do |rule|
       conversion << convert_rule(rule)
     end
 
@@ -48,15 +48,15 @@ class FluentdConvertor
       </filter>
     }
 
-    config.content["outputs"].each do |output|
+    config.content[:outputs].each do |output|
       conversion << convert_output(output)
     end
 
-    if config.content.key?('system') && config.content['system'].key?('autostop') && config.content['autostop']['enabled']
+    if config.content.key?(:system) && config.content[:system].key?(:autostop) && config.content[:system][:autostop][:enabled]
       conversion << "
       <match **>
         @type autoshutdown
-        timeout #{config.content['autostop']['timeout'] || 10}
+        timeout #{config.content[:system][:autostop][:timeout] || 10}
       </match>
       "
     end
@@ -81,8 +81,8 @@ class FluentdConvertor
 
   def convert_rule(rule)
     conversion = "\n"
-    if rule.key?("when") && rule["when"].key?("from")
-      conversion << "<filter #{rule["when"]["from"]}>\n"
+    if rule.key?(:when) && rule[:when].key?(:from)
+      conversion << "<filter #{rule[:when][:from]}>\n"
     else
       conversion << "<filter *>\n"
     end
@@ -94,7 +94,7 @@ class FluentdConvertor
       begin
         #{once_code}
       rescue => e
-        puts 'Error when excuting init code of rule #{rule['tag']}'
+        puts 'Error when excuting init code of rule #{rule[:tag]}'
         raise e
       end
       }
@@ -106,9 +106,9 @@ class FluentdConvertor
   }"
   code "${
     begin
-      #{rule['when'] ? wrap_with_when(rule['when']['predicate'], each_rule) : each_rule}
+      #{rule['when'] ? wrap_with_when(rule[:when][:predicate], each_rule) : each_rule}
     rescue => e
-      puts 'Error when excuting each code of rule #{rule['tag']} tags=' + record['_dataqube.tags'].to_s
+      puts 'Error when excuting each code of rule #{rule[:tag]} tags=' + record['_dataqube.tags'].to_s
       raise e
     end
     record
@@ -132,21 +132,21 @@ class FluentdConvertor
 
   def get_once(rule)
     conversion = ""
-    if rule["extract"]
-      rule["extract"].each do |extractor|
-        conversion << get_plugin_once(rule["tag"], @extractors_loader, extractor)
+    if rule[:extract]
+      rule[:extract].each do |extractor|
+        conversion << get_plugin_once(rule[:tag], @extractors_loader, extractor)
       end
     end
 
-    if rule["transform"]
-      rule["transform"].each do |transformer|
-        conversion << get_plugin_once(rule["tag"], @transformers_loader, transformer)
+    if rule[:transform]
+      rule[:transform].each do |transformer|
+        conversion << get_plugin_once(rule[:tag], @transformers_loader, transformer)
       end
     end
 
-    if rule["assert"]
-      rule["assert"].each do |assertion|
-        conversion << get_plugin_once(rule["tag"], @assertions_loader, assertion)
+    if rule[:assert]
+      rule[:assert].each do |assertion|
+        conversion << get_plugin_once(rule[:tag], @assertions_loader, assertion)
       end
     end
 
@@ -155,21 +155,21 @@ class FluentdConvertor
 
   def get_each(rule)
     conversion = ""
-    if rule["extract"]
-      rule["extract"].each do |extractor|
+    if rule[:extract]
+      rule[:extract].each do |extractor|
         extractor_conversion = ''
-        extractor_conversion << get_plugin_each(rule["tag"], @extractors_loader, extractor)
+        extractor_conversion << get_plugin_each(rule[:tag], @extractors_loader, extractor)
         if extractor[:when]
           extractor_conversion = wrap_with_when(extractor[:when], extractor_conversion)
         end
         conversion << extractor_conversion
       end
       conversion << %{
-        if !record.key?('_dataqube.quality') || !record['_dataqube.quality'].any? { |stamp| stamp[:tag] == '#{rule['tag']}' }
+        if !record.key?('_dataqube.quality') || !record['_dataqube.quality'].any? { |stamp| stamp[:tag] == '#{rule[:tag]}' }
           if !record.key?('_dataqube.tags')
             record['_dataqube.tags'] = []
           end
-          record['_dataqube.tags'].append('#{rule['tag']}')
+          record['_dataqube.tags'].append('#{rule[:tag]}')
         else
           return record
         end
@@ -179,13 +179,13 @@ class FluentdConvertor
         if !record.key?('_dataqube.tags')
           record['_dataqube.tags'] = []
         end
-        record['_dataqube.tags'].append('#{rule['tag']}')
+        record['_dataqube.tags'].append('#{rule[:tag]}')
       }
     end
 
-    if rule["transform"]
-      rule["transform"].each do |transformer|
-        transformer_conversion = get_plugin_each(rule["tag"], @transformers_loader, transformer)
+    if rule[:transform]
+      rule[:transform].each do |transformer|
+        transformer_conversion = get_plugin_each(rule[:tag], @transformers_loader, transformer)
         if transformer[:when]
           transformer_conversion = wrap_with_when(transformer[:when], transformer_conversion)
         end
@@ -193,9 +193,9 @@ class FluentdConvertor
       end
     end
 
-    if rule["assert"]
-      rule["assert"].each do |assertion|
-        assertion_conversion = get_plugin_each(rule["tag"], @assertions_loader, assertion)
+    if rule[:assert]
+      rule[:assert].each do |assertion|
+        assertion_conversion = get_plugin_each(rule[:tag], @assertions_loader, assertion)
         if assertion[:when]
           assertion_conversion = wrap_with_when(assertion[:when], assertion_conversion)
         end

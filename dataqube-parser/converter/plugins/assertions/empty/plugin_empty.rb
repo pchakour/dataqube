@@ -9,7 +9,7 @@ class Empty < Dataqube::Assertion
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-12}
+```yaml{11-13}
 - tag: EXTRACT_TEMPERATURES
   extract:
     - type: grok
@@ -61,7 +61,7 @@ class Empty < Dataqube::Assertion
 """
 
   plugin_config do
-    required(:source).array(:str?).description("Source field to check")
+    required(:source){ (array? & each { str? }) | str? }.description("Source field to check")
   end
 
   def initialize()

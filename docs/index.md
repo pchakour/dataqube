@@ -13,10 +13,10 @@ actions:
 features:
 - title: Parsing tool
   details: You can extract, transform and assert your data with our parsing tool under Apache 2 license easily extendable
-- title: Fluentd plugin
-  details: Your already set up a fluentd parser for your data ? You can use our fluentd plugin to write ruby assertions.
 - title: Dataqube app
   details: Use our free Dataqube app to create projects, quality gate and rules. Explore the analysis result to fix error until to meet quality requirements
+- title: Fluentd plugin
+  details: Your already set up a fluentd parser for your data ? You can use our fluentd plugin to write ruby assertions.
 footer: FOOTER
 ---
 
@@ -27,7 +27,7 @@ You can use our parsing tool independently of our Dataqube App. Easy to configur
 <CodeGroup>
   <CodeGroupItem title='config'>
 
-```yaml{1,8,13,17}
+```yaml{1,8,14,18}
 # Define system configuration
 system:
   # Stop parser if it doesn't receive events for 2 seconds
@@ -39,6 +39,7 @@ system:
 inputs:
   - type: tail
     path: path/to/my/log/file.log
+    tag: from_log
 
 # Define where to output data
 outputs:
@@ -51,7 +52,7 @@ rules:
       - type: grok
         pattern: "%{TIMESTAMP_ISO:timestamp} Los Angeles temperature: %{NUMBER:temperature:int}"
     assert:
-      - type: lower
+      - type: less_than
         source: temperature 
         value: 70
 ```

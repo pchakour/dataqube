@@ -10,7 +10,7 @@ Check if a field value is empty
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-12}
+```yaml{11-13}
 - tag: EXTRACT_TEMPERATURES
   extract:
     - type: grok
@@ -69,7 +69,7 @@ Check if a field value is empty
 | [message](#message) | Message to store when assert event | <code>string</code> | `null` | No |
 | [severity](#severity) | Severity of the assertion | <code>string</code> | info | No |
 | [expected](#expected) | Indicate if you expect the check failed or succeed | <code>string</code> | success | No |
-| [source](#source) | Source field to check | <code>array&lt;string&gt;</code> |  | Yes |
+| [source](#source) | Source field to check | <code>any of ["array", "string"]</code> |  | Yes |
 
 ### when
 
@@ -118,5 +118,5 @@ Indicate if you expect the check failed or succeed
 <br/><br/>
 Source field to check
 
-- Value type is <code>array&lt;string&gt;</code>
+- Value type is <code>any of ["array", "string"]</code>
 

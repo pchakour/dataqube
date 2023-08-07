@@ -20,6 +20,16 @@ module Dataqube
       fail NotImplementedError, "A plugin must implement the convert method"
     end
 
+    def convertType(type)
+      conversion = 'to_s'
+      if type == 'int' || type == 'integer'
+        conversion = 'to_i'
+      elsif type == 'float'
+        conversion = 'to_f'
+      end
+      return conversion
+    end
+
     protected
 
     def escape(value)
@@ -32,7 +42,10 @@ module Dataqube
       new_value = value
       records = []
       if value.kind_of?(String)
-        value.scan(/.*%\{(.*)\}[^%\{]*/).each {|match|
+        puts '-------------------'
+        puts value.scan(/%\{([^%\{]*)\}/)
+        puts '-------------------'
+        value.scan(/%\{([^%\{]*)\}/).each {|match|
           match.each {|interpretation|
             parts = interpretation.split(':')
             field = parts[0]
@@ -44,28 +57,18 @@ module Dataqube
         }
       
         if records.length > 0
-          new_value = replace_except_first_occurrence_with_regex(new_value, /record\[/, "' + \\0")
-
-          if !new_value.start_with?(records[0][0])
+          new_value = new_value.gsub!(/record\[[^\]]+\]/, "' + \\0.#{convertType(records.shift()[1])} + '")
+          if new_value.start_with?("' + ")
+            new_value = new_value["' + ".length..-1]
+          else
             new_value = "'" + new_value
           end
 
-          if !new_value.end_with?(records[records.length - 1][0])
+          if new_value.end_with?(" + '")
+            new_value = new_value[0..(" + '".length) * -1]
+          else
             new_value = new_value + "'"
           end
-
-          records.each{|value|
-            record = value[0]
-            type = value[1]
-
-            conversion = 'to_s'
-            if type == 'int' || type == 'integer'
-              conversion = 'to_i'
-            elsif type == 'float'
-              conversion = 'to_f'
-            end
-            new_value = new_value.sub(record, "\\0.#{conversion}")
-          }
         else
           return "'#{new_value}'"
         end
@@ -93,14 +96,15 @@ module Dataqube
       end
 
       record_deletes = ""
+      print fields
       fields.each {|field|
         path = path_field(field)
-  
+        puts path
         if path.length == 1
-          record_deletes << "\nrecord.delete(#{field})"
+          record_deletes << "\nrecord.delete('#{field}')"
+        else
+          record_deletes << "\nrecord['#{path[0..-2].join("']['")}'].delete('#{path[-1]}')"
         end
-  
-        record_deletes << "\nrecord['#{path[0..-2].join("']['")}'].delete('#{path[-1]}')"
       }
 
       return record_deletes
@@ -113,7 +117,10 @@ module Dataqube
       if first_match
         first_occurrence = first_match[0]
         modified_string = input_string.sub(first_occurrence, '') # Remove the first occurrence
+        puts 'modified string = ' + modified_string
+        puts 'first_occurrence string = ' + first_occurrence
         modified_string.gsub!(regex_to_replace, replacement) # Replace other occurrences
+        puts 'modified string = ' + modified_string
         modified_string = first_occurrence + modified_string # Add back the first occurrence
         return modified_string
       end

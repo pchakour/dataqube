@@ -14,7 +14,8 @@ class Config
         @content['rules'] = rules
       end
 
-      dataqube_output = @content['outputs'].find {|output| output['type'] == 'dataqube'}
+      # Todo extract this to plugin dataqube_app
+      dataqube_output = @content['outputs'].find {|output| output['type'] == 'dataqube_app'}
       dataqube_output['type'] = 'elasticsearch'
       dataqube_output['index'] = "data-#{injection_id}"
     end

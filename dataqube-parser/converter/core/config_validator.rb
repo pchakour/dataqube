@@ -61,67 +61,28 @@ def plugin_details(details)
   $config_param_register[plugin_type][plugin_name][:details] = details
 end
 
-def get_plugin_schema(type, plugin)
+def get_plugin_schemas(type, plugin)
   name = plugin[:type]
-  return $config_param_register[type][name][:schema_raw]
-end
-
-def get_schema(type)
   schemas = []
-
-  $config_param_register[type].each{ |key, properties|
-    current_schema = config_schema do
-      required(:type).filled(:string, eql?: key)
-    end
-
-    if properties[:schema_raw]
-      current_schema = current_schema.and(properties[:schema_raw])
-    end
-
-    if $config_param_register['common'][type] && $config_param_register['common'][type][:schema_raw]
-      current_schema.and($config_param_register['common'][type][:schema_raw])
-    end
-    schemas.push(current_schema)
-  }
-
-  if schemas.length > 0
-    schema = schemas.pop
-    schemas.each{ |s| schema = schema.or(s) }
-    schema
+  if $config_param_register[type][name] && $config_param_register[type][name][:schema_raw]
+    schemas.push($config_param_register[type][name][:schema_raw])
   end
-end
-
-def get_complete_schema
-  config_schema do
-    optional(:system).filled(:hash).schema(SYSTEM_SCHEMA)
-
-    required(:inputs).value(:array, min_size?: 1).each do
-      hash(get_schema('input'))
-    end
-
-    required(:outputs).value(:array, min_size?: 1).each do
-      hash(get_schema('output'))
-    end
-    
-    optional(:rules).value(:array).each do
-      hash do
-        required(:tag).filled(:string)
-        optional(:when).filled(:string)
-        optional(:extract).value(:array, min_size?: 1).each do
-          hash(get_schema('extractor'))
-        end
-        optional(:transform).value(:array, min_size?: 1).each do
-          hash(get_schema('transformer'))
-        end
-        optional(:assert).value(:array, min_size?: 1).each do
-          hash(get_schema('assertion'))
-        end
-      end
-    end
+  if $config_param_register['common']['plugin'] && $config_param_register['common']['plugin'][:schema_raw]
+    schemas.push($config_param_register['common']['plugin'][:schema_raw])
   end
+
+  if $config_param_register['common'][type] && $config_param_register['common'][type][:schema_raw]
+    schemas.push($config_param_register['common'][type][:schema_raw])
+  end
+
+  schemas
 end
 
 def apply_defaults_next(schema_type, config, key)
+  if !schema_type.respond_to?(:type)
+    return
+  end
+  
   if schema_type.type.class == Dry::Types::Constrained
     apply_defaults_next(schema_type.type, config, key)
   elsif schema_type.type.class == Dry::Types::Array::Member
@@ -143,6 +104,9 @@ def apply_defaults_next(schema_type, config, key)
 end
 
 def apply_defaults(schema, config)
+  if !config
+    return
+  end
   schema.each{ |key, p|
     if !config.key?(key)
       config[key] = p.meta[:default]
@@ -154,10 +118,10 @@ end
 
 def apply_defaults_plugins(plugin_type, config)
   config.each{|plugin|
-    plugin_schema = get_plugin_schema(plugin_type, plugin)
-    if plugin_schema
-      apply_defaults(plugin_schema.types, plugin)
-    end
+    schemas = get_plugin_schemas(plugin_type, plugin)
+    schemas.each{|schema|
+      apply_defaults(schema.types, plugin)
+    }
   }
 end
 
@@ -165,29 +129,53 @@ def apply_defaults_system(config)
   apply_defaults(SYSTEM_SCHEMA.types, config)
 end
 
-def apply_defaults_rules(config)
+def validate_and_apply_defaults_rules(config)
   config.each do |rule|
+    other_info = "Rule tag=#{rule[:tag]}"
     if rule[:extract]
+      validate_schema_plugin('extractor', rule[:extract], other_info)
       apply_defaults_plugins('extractor', rule[:extract])
     end
     if rule[:transform]
+      validate_schema_plugin('transformer', rule[:transform], other_info)
       apply_defaults_plugins('transformer', rule[:transform])
     end
     if rule[:assert]
+      validate_schema_plugin('assertion', rule[:assert], other_info)
       apply_defaults_plugins('assertion', rule[:assert])
     end
   end
 end
 
-def config_validate_and_apply_defaults(config)
-  complete_config_schema = get_complete_schema
-  validation_result = complete_config_schema.call(config.content)
+def validate_schema_system(config)
+  validation_result = SYSTEM_SCHEMA.call(config)
   if !validation_result.success?
-    fail ConfigurationMisformat, validation_result.errors.to_h
+    fail ConfigurationMisformat, "System configuration invalid: " + validation_result.errors.to_h.to_json
   end
+end
 
+def validate_schema_plugin(plugin_type, config, other_info = nil)
+  config.each_with_index{|plugin, index|
+    schemas = get_plugin_schemas(plugin_type, plugin) 
+    schemas.each {|schema| 
+      validation_result = schema.call(plugin)
+      if !validation_result.success?
+        error = "#{plugin_type} at position #{index} named #{plugin[:type]} has an invalid configuration: " + validation_result.errors.to_h.to_json
+        if other_info
+          error = "[#{other_info}] #{error}"
+        end
+        fail ConfigurationMisformat, error
+      end
+    }
+  }
+end
+
+def config_validate_and_apply_defaults(config)
+  validate_schema_system(config.content[:system])
   apply_defaults_system(config.content[:system])
+  validate_schema_plugin('input', config.content[:inputs])
   apply_defaults_plugins('input', config.content[:inputs])
+  validate_schema_plugin('output', config.content[:outputs])
   apply_defaults_plugins('output', config.content[:outputs])
-  apply_defaults_rules(config.content[:rules])
+  validate_and_apply_defaults_rules(config.content[:rules])
 end

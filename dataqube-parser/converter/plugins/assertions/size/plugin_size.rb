@@ -7,7 +7,7 @@ class Size < Dataqube::Assertion
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-13}
+```yaml{11-14}
 - tag: EXTRACT_TEMPERATURES
   extract:
     - type: grok

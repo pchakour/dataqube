@@ -26,18 +26,10 @@ rules:
   #     - type: less_than
   #       source: temperature
   #       value: 70
-  - tag: MAX_TEMPERATURE
+  - tag: EXAMPLE_UUID
     transform:
-      - type: join
-        by: 'toto'
-        from: 
-          te: t
-        until:
-          te: t
-        using:
-          - when: 
-              predicate: "true"
-            code: record['toto'] = toto
+      - type: uuid
+        target: my_super_id
 
 #     transform:
 #       - type: list

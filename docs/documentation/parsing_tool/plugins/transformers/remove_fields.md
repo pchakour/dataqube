@@ -8,7 +8,7 @@ Remove fields from an event
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{3-5}
+```yaml{3-6}
 - tag: EXAMPLE_REMOVE_FIELD
   transform:
     - type: remove_fields
@@ -46,7 +46,7 @@ Remove fields from an event
 | Parameter | Description | Type | Default | Required |
 |---|---|---|---|---|
 | [when](#when) | Ruby predicate to indicate when execute this plugin | <code>string</code> | `null` | No |
-| [source](#source) | Field to remove. Accept an array to delete several fields at once | <code>array&lt;string&gt;</code> |  | Yes |
+| [source](#source) | Field to remove. Accept an array to delete several fields at once | <code>any of ["array", "string"]</code> |  | Yes |
 
 ### when
 
@@ -65,5 +65,5 @@ Ruby predicate to indicate when execute this plugin
 <br/><br/>
 Field to remove. Accept an array to delete several fields at once
 
-- Value type is <code>array&lt;string&gt;</code>
+- Value type is <code>any of ["array", "string"]</code>
 

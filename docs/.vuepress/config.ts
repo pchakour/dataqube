@@ -60,10 +60,6 @@ export default defineUserConfig({
             link: '/documentation/getting_started',
           },
           {
-            text: 'Fluentd plugin',
-            link: '/documentation/fluentd_plugin'
-          },
-          {
             text: 'Parsing tool',
             collapsible: true,
             children: [

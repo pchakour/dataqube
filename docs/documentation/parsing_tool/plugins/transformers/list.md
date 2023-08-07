@@ -4,6 +4,46 @@
 
 Parse a serialized list
 
+
+  <CodeGroup>
+  <CodeGroupItem title='CONFIG'>
+
+```yaml{6-9}
+- tag: EXAMPLE_LIST
+  extract:
+    - type: grok
+      pattern: 'Los Angeles temperatures: \[%{GREEDYDATA:temperatures}\]'
+  transform:
+    - type: list
+      source: temperatures
+      target: temperatures
+      overwrite: true
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title='EVENT'>
+
+  ```json
+  {
+    "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"
+  }
+  ```
+  
+  </CodeGroupItem>
+  <CodeGroupItem title='OUTPUT'>
+  
+  ```json{3}
+  {
+    "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
+    "temperatures": [64, 65, 67, 67, 65, 65, 66],
+    "_dataqube.tags": ["EXAMPLE_LIST"]
+  }
+  ```
+  
+  </CodeGroupItem>
+</CodeGroup>
+  
+
 ## List of parameters
 
 | Parameter | Description | Type | Default | Required |

@@ -7,7 +7,7 @@ class Contains < Dataqube::Assertion
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{10-12}
+```yaml{11-13}
 - tag: EXTRACT_TEMPERATURES
   extract:
     - type: grok

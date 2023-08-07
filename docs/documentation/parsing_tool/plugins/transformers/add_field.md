@@ -28,7 +28,7 @@ This plugin allow you to add a new field in your record
   </CodeGroupItem>
   <CodeGroupItem title='OUTPUT'>
   
-  ```json{5-15}
+  ```json{3}
   {
     "message": "Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]",
     "new_field_message": "Message => Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]"

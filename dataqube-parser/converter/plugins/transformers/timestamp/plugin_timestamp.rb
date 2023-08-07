@@ -11,13 +11,13 @@ This plugin assert an error if the date parsing failed
 <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{3-5}
+```yaml{6-7}
 - tag: EXAMPLE_PARSE_DATE
   extract:
     - type: grok
       pattern: ^%{TIMESTAMP_ISO8601:date} %{GREEDYDATA:log}$ 
   transform:
-    - type: date
+    - type: timestamp
       source: date
 ```
 
@@ -111,7 +111,7 @@ This plugin assert an error if the date parsing failed
 
     
   def initialize()
-    super("date")
+    super("timestamp")
   end
 
   def once(rule_tag, params)

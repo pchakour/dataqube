@@ -47,11 +47,12 @@ This object contains the following properties:
 #### from.rule_tag
 
 <br/>
-<Badge type='tip' text='required' vertical='bottom' />
+<Badge type='warning' text='optional' vertical='bottom' />
 <br/><br/>
 Tag of a rule
 
 - Value type is <code>string</code>
+- The default is `toto`
 
 ### until
 
@@ -67,11 +68,12 @@ This object contains the following properties:
 #### until.rule_tag
 
 <br/>
-<Badge type='tip' text='required' vertical='bottom' />
+<Badge type='warning' text='optional' vertical='bottom' />
 <br/><br/>
 Tag of a rule
 
 - Value type is <code>string</code>
+- The default is `toto`
 
 ### using
 
@@ -98,11 +100,12 @@ This object contains **any of** the following properties:
 #### using[].when.rule_tag
 
 <br/>
-<Badge type='tip' text='required' vertical='bottom' />
+<Badge type='warning' text='optional' vertical='bottom' />
 <br/><br/>
 Tag of a rule
 
 - Value type is <code>string</code>
+- The default is `toto`
 
 #### using[].when.predicate
 

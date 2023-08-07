@@ -3,6 +3,45 @@ require_relative '../../../core/transformer'
 class List < Dataqube::Transformer
   plugin_desc "Parse a serialized list"
   plugin_license "community"
+  plugin_details """
+  <CodeGroup>
+  <CodeGroupItem title='CONFIG'>
+
+```yaml{6-9}
+- tag: EXAMPLE_LIST
+  extract:
+    - type: grok
+      pattern: 'Los Angeles temperatures: \\[%{GREEDYDATA:temperatures}\\]'
+  transform:
+    - type: list
+      source: temperatures
+      target: temperatures
+      overwrite: true
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title='EVENT'>
+
+  ```json
+  {
+    \"message\": \"Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]\"
+  }
+  ```
+  
+  </CodeGroupItem>
+  <CodeGroupItem title='OUTPUT'>
+  
+  ```json{3}
+  {
+    \"message\": \"Los Angeles temperatures: [64, 65, 67, 67, 65, 65, 66]\",
+    \"temperatures\": [64, 65, 67, 67, 65, 65, 66],
+    \"_dataqube.tags\": [\"EXAMPLE_LIST\"]
+  }
+  ```
+  
+  </CodeGroupItem>
+</CodeGroup>
+  """
 
   plugin_config do
     required(:source).filled(:string).default('message').description("Source field to parse")

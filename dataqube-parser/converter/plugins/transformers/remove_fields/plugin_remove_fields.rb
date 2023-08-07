@@ -7,7 +7,7 @@ class RemoveFields < Dataqube::Transformer
   <CodeGroup>
   <CodeGroupItem title='CONFIG'>
 
-```yaml{3-5}
+```yaml{3-6}
 - tag: EXAMPLE_REMOVE_FIELD
   transform:
     - type: remove_fields
@@ -41,7 +41,8 @@ class RemoveFields < Dataqube::Transformer
   """
 
   plugin_config do
-    required(:source).array(:string).description("Field to remove. Accept an array to delete several fields at once")
+    required(:source){ (array? & str?) | str? }
+      .description("Field to remove. Accept an array to delete several fields at once")
   end
 
   def initialize()
@@ -53,7 +54,7 @@ class RemoveFields < Dataqube::Transformer
   end
 
   def each(rule_tag, params)
-    sources = params[:source].kind_of?(Array) ? params[:source].to_s.gsub('"', "'") : [params[:source]].to_s.gsub('"', "'")
+    sources = params[:source]
     record_delete(sources)
   end
 end
