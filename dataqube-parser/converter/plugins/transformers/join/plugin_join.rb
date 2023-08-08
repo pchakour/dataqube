@@ -47,10 +47,10 @@ class Join < Dataqube::Transformer
 
   def each(rule_tag, params)
     key = params[:by]
-    from_rule_tag = params[:from]['rule_tag']
-    from_predicate = params[:from]['predicate']
-    until_rule_tag = params[:until]['rule_tag']
-    until_predicate = params[:until]['predicate']
+    from_rule_tag = params[:from][:rule_tag]
+    from_predicate = params[:from][:predicate]
+    until_rule_tag = params[:until][:rule_tag]
+    until_predicate = params[:until][:predicate]
     using_list = params[:using]
 
     conversion = %{
@@ -62,9 +62,9 @@ class Join < Dataqube::Transformer
     }
 
     using_list.each { |item|
-      using_when_tag = item['when']['rule_tag']
-      using_when_predicate = item['when']['predicate']
-      using_code = item['code']
+      using_when_tag = item[:when][:rule_tag]
+      using_when_predicate = item[:when][:predicate]
+      using_code = item[:code]
       conversion << %{
         if #{get_condition(using_when_tag, using_when_predicate)} && map != nil
           #{using_code}

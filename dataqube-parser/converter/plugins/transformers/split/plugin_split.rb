@@ -52,7 +52,7 @@ Limitation only one by tag and at the end of the transform section
 """
 
   plugin_config do
-    required(:source){ (array? & str?) | str? }
+    required(:source){ filled? & (str? | (array? & each { str? })) }
       .description("Field containing array to split in several events. You can specify an array")
   end
 
