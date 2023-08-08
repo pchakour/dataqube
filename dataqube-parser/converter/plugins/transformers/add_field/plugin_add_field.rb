@@ -41,7 +41,7 @@ class AddField < Dataqube::Transformer
 
   plugin_config do
     required(:name).filled(:string).description("New field name")
-    required(:value).filled(:string).isInterpreted.description("New value field")
+    required(:value).value(:string).isInterpreted.description("New value field")
   end
 
   def initialize()
