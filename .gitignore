@@ -9,3 +9,4 @@ dataqube-parser/fluentd.conf
 **/vendornode_modules
 .temp
 .cache
+.gems

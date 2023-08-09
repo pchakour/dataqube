@@ -23,6 +23,13 @@ task :install,[:fluent_elasticsearch_plugin_version, :elasticsearch_version] => 
 
   puts 'Running bundler'.blue
   Bundler.with_unbundled_env do
+    Dir.chdir(current_folder) do
+      `bundle config set --local path #{current_folder}/.gems`
+      `bundle install`
+    end
+  end
+
+  Bundler.with_unbundled_env do
     Dir.chdir(fluentd_src_folder) do
       `bundle config set --local path #{fluentd_folder}`
       `bundle install`
