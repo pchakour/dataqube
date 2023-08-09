@@ -46,6 +46,7 @@ task :install,[:fluent_elasticsearch_plugin_version, :elasticsearch_version] => 
     Dir.chdir(fluentd_folder) do
       `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install elasticsearch:#{elasticsearch_version} --install-dir #{fluentd_folder}`
       `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_plugin_version} --install-dir #{fluentd_folder}`
+      `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-record-modifier --install-dir #{fluentd_folder}`
     end
   end
 

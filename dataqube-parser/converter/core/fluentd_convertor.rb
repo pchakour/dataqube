@@ -16,6 +16,11 @@ class FluentdConvertor
 
     conversion << %{
       <filter *>
+        @type record_modifier
+        # set UTF-8 encoding information to string.
+        char_encoding utf-8
+      </filter>
+      <filter *>
         @type dataqube
         init "${
           @map = { 'count' => 0, 'broadcasted_metric' => 0 }
