@@ -70,16 +70,22 @@ task :configure_fluentd do
     gemfile = File.join(plugin_path, 'Gemfile')
     if File.exist?(gemfile)
       File.foreach(gemfile) do |line|
-        plugin_gems.push(line) if line.start_with?("gem ")
+        plugin_gems.push(line.sub("gem ", "")) if line.start_with?("gem ")
       end
     end
   end
 
   if plugin_gems.length > 0
-    dataqube_ruby_gemfile = File.join(current_folder, 'dataqube-ruby', 'Gemfile')
-    File.open(dataqube_ruby_gemfile, 'a') do |file|
-      file.puts plugin_gems.join("\n")
-    end
+    dataqube_ruby_specfile = File.join(current_folder, 'dataqube-ruby', 'dataqube-ruby.gemspec')
+    specfile_content = File.read(dataqube_ruby_specfile)
+    end_index = specfile_content.index('end')
+    specfile_new_content = specfile_content.insert(end_index, plugin_gems.map{|gem|
+        "s.add_dependency " + gem
+      }.join("\n") + "\n"
+    )
+  
+    # Write the modified contents back to the file
+    File.write(dataqube_ruby_specfile, specfile_new_content)
   end
   
   Bundler.with_unbundled_env do
