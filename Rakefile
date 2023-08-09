@@ -59,11 +59,12 @@ task :configure_fluentd do
   fluentd_plugins_folder = File.join fluentd_folder, 'plugins'
   FileUtils.rm_rf Dir.glob(File.join(fluentd_plugins_folder, '*'))
 
-  plugins_folder = Dir.entries(File.join(current_folder, 'dataqube-ruby', 'plugins'))
+  plugin_dir_path = File.join(current_folder, 'dataqube-ruby', 'plugins')
+  plugins_folder = Dir.entries(plugin_dir_path)
   plugin_gems = []
   # Filter out only the directory names
   plugins_folder.each do |plugin|
-    plugin_path = File.join(plugins_folder, plugin)
+    plugin_path = File.join(plugin_dir_path, plugin)
     next if plugin == '.' || plugin == '..' || !File.directory?(plugin_path)
     # Check if gemfile exists
     gemfile = File.join(plugin_path, 'Gemfile')
