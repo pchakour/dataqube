@@ -16,8 +16,8 @@ OptionParser.new do |opts|
     options[:doctext] = d
   end
 
-  opts.on("-p [PARSER]", "--parser [PARSER]", "Parser to use, one of [fluentd]") do |p|
-    options[:parser] = p
+  opts.on("-o [PATH]", "--output-config [PATH]", "Path to the output configuration generated for fluentd") do |c|
+    options[:output] = c
   end
 
   opts.on("-c [PATH]", "--config [PATH]", "Config path") do |c|
@@ -72,7 +72,6 @@ if options[:docjson]
 end
 
 raise OptionParser::MissingArgument if options[:config].nil?
-options[:parser] = 'fluentd' if options[:parser].nil?
 options[:projectVersion] = 'last' if options[:projectVersion].nil?
 
 rules = nil
@@ -93,13 +92,13 @@ end
 
 config_path = Pathname.new(options[:config]).realpath.to_s
 conversion = core.convert(config_path, injection_id, rules)
-output_path = "#{File.dirname(__FILE__)}/../#{options[:parser]}.conf"
+output_path = options[:output] || "#{File.dirname(__FILE__)}/../fluentd.conf"
 File.open(output_path, 'w') { |file| file.write(conversion) }
 fluentd_dir = "#{File.dirname(__FILE__)}/../fluentd"
 env = { "GEM_PATH" => fluentd_dir }
 pid = Process.spawn(
   env,
-  "#{fluentd_dir}/bin/#{options[:parser]}",
+  "#{fluentd_dir}/bin/fluentd",
   "--under-supervisor",
   "-c",
   output_path,

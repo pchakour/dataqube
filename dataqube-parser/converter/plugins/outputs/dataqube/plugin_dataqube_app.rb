@@ -17,6 +17,11 @@ class DataqubeApp < Dataqube::Output
 
   """
 
+  # plugin_config do
+    # required(:project_id).filled(:string).description("The id of your project in Dataqube App")
+    # optional(:project_version).filled(:string).default('last').description("Version of the analysis")
+  # end
+
   def initialize()
     super("dataqube_app")
   end
