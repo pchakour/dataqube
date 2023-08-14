@@ -11,16 +11,16 @@ class Config
 
     if !injection_id.nil?
       if !rules.nil?
-        @content['rules'] = rules
+        @content[:rules] = rules
       end
 
       # Todo extract this to plugin dataqube_app
-      dataqube_output = @content['outputs'].find {|output| output['type'] == 'dataqube_app'}
-      dataqube_output['type'] = 'elasticsearch'
-      dataqube_output['index'] = "data-#{injection_id}"
+      dataqube_output = @content[:outputs].find {|output| output[:type] == 'dataqube_app'}
+      dataqube_output[:type] = 'elasticsearch'
+      dataqube_output[:index] = "data-#{injection_id}"
     end
 
-    resolveIncludes()
+    @content = resolveIncludes(@content, config_path)
   end
 
   private
@@ -35,34 +35,39 @@ class Config
     end
   end
 
-  def  resolveIncludes() 
-    if @content.key?('rules')
+  def resolveIncludes(config_content, config_path) 
+    puts "Resolve includes"
+    if config_content.key?(:rules)
+      config_dirname = File.dirname(config_path)
       value_to_replace = []
-      @content['rules'].each_with_index { |rule, index| 
-        if rule.key?('include')
-          file_path = rule['include']
+      config_content[:rules].each_with_index { |rule, index| 
+        if rule.key?(:include)
+          file_path = File.expand_path(rule[:include], config_dirname)
           include_content = YAML.load_file(file_path)
-
-          if include_content.key?('rules')
+          include_content = deep_symbolize_keys(include_content)
+          include_content = resolveIncludes(include_content, file_path)
+          if include_content.key?(:rules)
             value_to_replace.push({
-              'content' => include_content['rules'],
+              'content' => include_content[:rules],
               'index' => index
-            })
+              })
           end
         end
       }
-
+        
       value_to_replace.each { |replacement|
         replacement['content'].each_with_index { |replacement_content, index| 
           current_index = replacement['index'] + index
           if current_index == 0
-            @content['rules'][current_index] = replacement_content
+            config_content[:rules][current_index] = replacement_content
           else
-            @content['rules'].insert(current_index, replacement_content)
+            config_content[:rules].insert(current_index, replacement_content)
           end
         }
       }
     end
+
+    config_content
   end
 
   def load(config_path)
