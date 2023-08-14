@@ -40,6 +40,7 @@ class Elasticsearch < Dataqube::Output
       "
       <match *>
         @type elasticsearch
+        @log_level debug
         scheme #{params[:scheme]}
         host #{params[:host]}
         port #{params[:port]}
@@ -49,10 +50,8 @@ class Elasticsearch < Dataqube::Output
         ca_file #{params[:cacert]}
         buffer_type memory
         flush_interval 5s
-        @log_level debug
-        retry_limit 5
-        retry_wait 1.0
         num_threads 1
+        type_name _doc
       </match>
     "
     else

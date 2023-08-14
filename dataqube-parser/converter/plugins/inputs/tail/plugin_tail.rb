@@ -45,6 +45,10 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
       .filled(:string, included_in?: ['auto', 'raw', 'json'])
       .default('auto')
       .description("Decoding format of files. 'auto' use extension files to determine the right format")
+
+    optional(:pos_file)
+      .filled(:string)
+      .description("Record the position it last read from this file")
   end
 
   def initialize()
@@ -60,6 +64,7 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
         tag #{params[:tag]}
         read_from_head true
         path_key filepath
+        pos_file #{params[:pos_file]}
         <parse>
           @type #{params[:format] === 'auto' || params[:format] === 'raw' ? 'none' : params[:format]}
         </parse>

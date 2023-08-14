@@ -42,9 +42,6 @@ module Dataqube
       new_value = value
       records = []
       if value.kind_of?(String)
-        puts '-------------------'
-        puts value.scan(/%\{([^%\{]*)\}/)
-        puts '-------------------'
         value.scan(/%\{([^%\{]*)\}/).each {|match|
           match.each {|interpretation|
             parts = interpretation.split(':')

@@ -59,10 +59,12 @@ class FluentdConvertor
 
     if config.content.key?(:system) && config.content[:system].key?(:autostop) && config.content[:system][:autostop][:enabled]
       conversion << "
-      <match **>
-        @type autoshutdown
-        timeout #{config.content[:system][:autostop][:timeout] || 10}
-      </match>
+      <label @FLUENT_LOG>
+        <match fluent.*>
+          @type autoshutdown
+          timeout #{config.content[:system][:autostop][:timeout] || 10}
+        </match>
+      </label>
       "
     end
 
