@@ -54,7 +54,7 @@ module Dataqube
         }
       
         if records.length > 0
-          new_value = new_value.gsub!(/record\[[^\]]+\]/, "' + \\0.#{convertType(records.shift()[1])} + '")
+          new_value = new_value.gsub!(records[0][0], "' + \\0.#{convertType(records.shift()[1])} + '")
           if new_value.start_with?("' + ")
             new_value = new_value["' + ".length..-1]
           else

@@ -113,7 +113,7 @@ class FluentdConvertor
   }"
   code "${
     begin
-      #{rule['when'] ? wrap_with_when(rule[:when][:predicate], each_rule) : each_rule}
+      #{rule[:when] ? wrap_with_when(rule[:when][:predicate], each_rule) : each_rule}
     rescue => e
       puts 'Error when excuting each code of rule #{rule[:tag]} tags=' + record['_dataqube.tags'].to_s
       raise e

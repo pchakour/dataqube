@@ -40,7 +40,7 @@ class Elasticsearch < Dataqube::Output
       "
       <match *>
         @type elasticsearch
-        @log_level debug
+        @log_level info
         scheme #{params[:scheme]}
         host #{params[:host]}
         port #{params[:port]}
