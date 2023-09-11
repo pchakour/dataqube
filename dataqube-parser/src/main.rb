@@ -115,6 +115,13 @@ Signal.trap("INT") do
   exit
 end
 
+Signal.trap("TERM") do
+  # code à exécuter lorsque le signal INT est capturé
+  puts "Signal TERM capturé. Arrêt du programme..."
+  Process.kill("KILL", pid)
+  exit
+end
+
 Process.wait(pid)
 
 print "Injection #{injection_id} done\n";
