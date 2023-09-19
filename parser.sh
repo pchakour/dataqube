@@ -12,7 +12,7 @@ PID=$!
 handle_sigterm() {
    echo "SIGTERM received, exiting now"
    kill -15 $PID
-   exit 0
+   exit 1
 }
 
 trap handle_sigterm TERM
