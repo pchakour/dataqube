@@ -12,11 +12,23 @@ PID=$!
 handle_sigterm() {
    echo "SIGTERM received, exiting now"
    kill -15 $PID
-   exit 1
+   exit 143
+}
+
+handle_sigint() {
+   echo "SIGINT received, exiting now"
+   kill -15 $PID
+   exit 130
+}
+
+handle_sigkill() {
+   echo "SIGKILL received, exiting now"
+   kill -15 $PID
+   exit 137
 }
 
 trap handle_sigterm TERM
-trap handle_sigterm INT
-trap handle_sigterm KILL
+trap handle_sigint INT
+trap handle_sigkill KILL
 
 wait $PID
