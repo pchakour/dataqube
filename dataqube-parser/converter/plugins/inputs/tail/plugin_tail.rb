@@ -64,7 +64,7 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
         tag #{params[:tag]}
         read_from_head true
         path_key filepath
-        pos_file #{params[:pos_file]}
+        #{params[:pos_file] ? "pos_file #{params[:pos_file]}" : ''}
         <parse>
           @type #{params[:format] === 'auto' || params[:format] === 'raw' ? 'none' : params[:format]}
         </parse>
