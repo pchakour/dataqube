@@ -1,6 +1,8 @@
 require 'yaml'
 require 'optparse'
 require 'pathname'
+require 'tmpdir'
+require 'securerandom'
 require_relative '../converter/core/core'
 require_relative './dataqube_api'
 
@@ -92,7 +94,14 @@ end
 
 config_path = Pathname.new(options[:config]).realpath.to_s
 conversion = core.convert(config_path, injection_id, rules)
-output_path = options[:output] || "#{File.dirname(__FILE__)}/../fluentd.conf"
+if options[:output]
+  output_path = File.expand_path options[:output], Dir.pwd
+else
+  tmpdir = Dir.tmpdir()
+  uuid = SecureRandom.uuid
+  output_path =  "#{tmpdir}/fluentd-#{uuid}.conf"
+end
+
 File.open(output_path, 'w') { |file| file.write(conversion) }
 pid = Process.spawn(
   ENV.to_h,
@@ -108,17 +117,18 @@ Signal.trap("INT") do
   # code à exécuter lorsque le signal INT est capturé
   puts "Signal INT capturé. Arrêt du programme..."
   Process.kill("KILL", pid)
-  exit
+  exit 130
 end
 
 Signal.trap("TERM") do
   # code à exécuter lorsque le signal INT est capturé
   puts "Signal TERM capturé. Arrêt du programme..."
   Process.kill("KILL", pid)
-  exit
+  exit 143
 end
 
 Process.wait(pid)
+File.delete(output_path)
 
 print "Injection #{injection_id} done\n";
 if injection_id

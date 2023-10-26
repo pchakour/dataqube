@@ -1,38 +1,17 @@
-# !/bin/sh
+#! /usr/bin/env ruby
 
-dirname="$(dirname "$0")"
-root_dir=${dirname}/..
-directory_path=${root_dir}/vendor/bundle/ruby
-ruby_version=$(find "$directory_path" -mindepth 1 -maxdepth 1 -type d -printf "%f\n")
-gem_repository=$(realpath ${directory_path}/${ruby_version})
+dirname = File.dirname(__FILE__)
+root_dir = File.join dirname, '..'
+directory_path = File.join root_dir, 'vendor', 'bundle', 'ruby'
+ruby_version = Dir.entries(directory_path).reject! { |entry| entry == '.' || entry == '..' }[0]
+gem_repository = File.realpath File.join(directory_path, ruby_version)
 
-if [ -z "${RUBY_BIN}" ]; then
-  RUBY_BIN="ruby"
-fi
+ENV['GEM_PATH'] = "$GEM_PATH:#{gem_repository}"
+pid = Process.spawn(
+  ENV.to_h,
+  Gem.ruby,
+  "#{root_dir}/src/dataqube-parser/src/main.rb",
+  *ARGV
+)
 
-GEM_PATH=${gem_repository} ${RUBY_BIN} ${root_dir}/src/dataqube-parser/src/main.rb $@ &
-PID=$!
-
-handle_sigterm() {
-   echo "SIGTERM received, exiting now"
-   kill -15 $PID
-   exit 143
-}
-
-handle_sigint() {
-   echo "SIGINT received, exiting now"
-   kill -15 $PID
-   exit 130
-}
-
-handle_sigkill() {
-   echo "SIGKILL received, exiting now"
-   kill -15 $PID
-   exit 137
-}
-
-trap handle_sigterm TERM
-trap handle_sigint INT
-trap handle_sigkill KILL
-
-wait $PID
+Process.wait(pid)

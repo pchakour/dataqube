@@ -5,38 +5,14 @@ system:
 
 inputs:
   - type: tail
-    path: example.log
+    path: examples/example.log
     tag: LOG
 
 outputs:
   - type: stdout
-  # - type: dataqube
-  # - type: elasticsearch
-  #   scheme: https
-  #   user: admin
-  #   password: admin
-  #   cacert: /home/hawk/development/hawk/infrastructure/dev/kibana/config/root-ca.pem
 
 rules:
-  # - tag: MAX_TEMPERATURE
-  #   extract:
-  #     - type: grok
-  #       pattern: "%{TIMESTAMP_ISO8601:timestamp} Los Angeles temperature: %{NUMBER:temperature:int}"
-  #   assert:
-  #     - type: less_than
-  #       source: temperature
-  #       value: 70
   - tag: EXAMPLE_UUID
     transform:
       - type: uuid
         target: my_super_id
-
-#     transform:
-#       - type: list
-#         source: temperatures
-#         overwrite: true
-#     assert:
-#       - type: size
-#         source: temperatures
-#         min: 1
-#         max: 5
