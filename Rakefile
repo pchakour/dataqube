@@ -3,111 +3,125 @@ require 'fileutils'
 require 'bundler'
 require 'colorize'
 
-FLUENT_GIT_URL = 'https://github.com/fluent/fluentd.git'
-current_folder = File.dirname(__FILE__)
-dataqube_parser_folder = File.join(current_folder, 'dataqube-parser')
-dataqube_ruby_folder = File.join(current_folder, 'dataqube-ruby')
-fluentd_folder = File.join(dataqube_parser_folder, 'fluentd')
-dataqube_plugin_folder = File.join dataqube_parser_folder, 'fluent-plugin-dataqube'
-autoshutdown_plugin_folder = File.join dataqube_parser_folder, 'fluent-plugin-autoshutdown'
+RUBY_SHIP_GIT_URL = 'https://github.com/stephan-nordnes-eriksen/ruby_ship.git'
+RUBY_TAR = 'https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.4.tar.gz'
+root_folder = File.dirname(__FILE__)
+src_folder = File.join root_folder, 'src'
+fluentd_plugins_folder = File.join(src_folder, 'fluentd-plugins')
+dataqube_plugin_folder = File.join fluentd_plugins_folder, 'fluent-plugin-dataqube'
+dataqube_lib_folder = File.join src_folder, 'dataqube-ruby'
+autoshutdown_plugin_folder = File.join fluentd_plugins_folder, 'fluent-plugin-autoshutdown'
+dist_folder = File.join root_folder, 'dist'
 
-desc "Install all dependencies"
-task :install,[:fluent_elasticsearch_plugin_version, :elasticsearch_version] => [:clean] do |t, args|
-  puts 'Running installation'.green
-  fluent_elasticsearch_plugin_version = args[:fluent_elasticsearch_plugin_version] || "5.3.0"
-  elasticsearch_version = args[:elasticsearch_version] || "8.8.0"
-  fluentd_src_folder = File.join(current_folder, 'fluentd-src')
-  Dir.mkdir(fluentd_folder)
-  puts 'Cloning fluentd parser'.blue
-  Git.clone FLUENT_GIT_URL, fluentd_src_folder
-
-  puts 'Running bundler'.blue
-
-  global_gems_repository = "#{current_folder}/.gems"
-  Bundler.with_unbundled_env do
-    Dir.chdir(current_folder) do
-      `bundle config set --local path #{global_gems_repository}`
-      `bundle install`
-    end
+task :build do
+  puts 'Building gems'.green
+  # Generate dataqube-ruby and autoshutdown
+  puts 'Build fluent-plugin-autoshutdown gem'
+  Dir.chdir(autoshutdown_plugin_folder) do
+    `gem build fluent-plugin-autoshutdown.gemspec`
   end
 
-  Bundler.with_unbundled_env do
-    Dir.chdir(fluentd_src_folder) do
-      `bundle config set --local path #{fluentd_folder}`
-      `bundle install`
-      `bundle exec rake build`
-      `gem install pkg/$(ls ./pkg) --install-dir #{fluentd_folder}`
-    end
+  puts 'Build dataqube-ruby gem'
+  Dir.chdir(dataqube_lib_folder) do
+    `gem build dataqube-ruby.gemspec`
   end
 
-  puts 'Installing fluentd plugins'
-
-  Bundler.with_unbundled_env do
-    Dir.chdir(fluentd_folder) do
-      `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install elasticsearch:#{elasticsearch_version} --install-dir #{fluentd_folder}`
-      `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-elasticsearch:#{fluent_elasticsearch_plugin_version} --install-dir #{fluentd_folder}`
-      `GEM_PATH="#{fluentd_folder}" bin/fluent-gem install fluent-plugin-record-modifier --install-dir #{fluentd_folder}`
-    end
+  puts 'Build fluent-plugin-dataqube gem'
+  Dir.chdir(dataqube_plugin_folder) do
+    `gem build fluent-plugin-dataqube.gemspec`
   end
-
-  puts 'Removing temp files'.blue
-  FileUtils.rm_rf(fluentd_src_folder)
-  Rake::Task[:configure_fluentd].invoke
 end
 
-task :configure_fluentd do
-  puts 'Configuring fluentd parser'.green
-  fluentd_plugins_folder = File.join fluentd_folder, 'plugins'
-  FileUtils.rm_rf Dir.glob(File.join(fluentd_plugins_folder, '*'))
+task :install => [:build] do
+  puts 'Running installation'.green
 
-  plugin_dir_path = File.join(current_folder, 'dataqube-ruby', 'plugins')
-  plugins_folder = Dir.entries(plugin_dir_path)
-  plugin_gems = []
-  # Filter out only the directory names
-  plugins_folder.each do |plugin|
-    plugin_path = File.join(plugin_dir_path, plugin)
-    next if plugin == '.' || plugin == '..' || !File.directory?(plugin_path)
-    # Check if gemfile exists
-    gemfile = File.join(plugin_path, 'Gemfile')
-    if File.exist?(gemfile)
-      File.foreach(gemfile) do |line|
-        plugin_gems.push(line.sub("gem ", "")) if line.start_with?("gem ")
-      end
-    end
+  puts 'Installation of gem'.blue
+  puts 'Installation of fluent-plugin-autoshutdown gem'
+  Dir.chdir(root_folder) do
+    `gem install src/fluentd-plugins/fluent-plugin-autoshutdown/fluent-plugin-autoshutdown-0.0.1.gem --install-dir vendor/bundle/ruby/3.1.0`
   end
 
-  if plugin_gems.length > 0
-    dataqube_ruby_specfile = File.join(current_folder, 'dataqube-ruby', 'dataqube-ruby.gemspec')
-    specfile_content = File.read(dataqube_ruby_specfile)
-    end_index = specfile_content.index('end')
-    specfile_new_content = specfile_content.insert(end_index, plugin_gems.map{|gem|
-        "s.add_dependency " + gem
-      }.join("\n") + "\n"
-    )
-  
-    # Write the modified contents back to the file
-    File.write(dataqube_ruby_specfile, specfile_new_content)
-  end
-  
-  Bundler.with_unbundled_env do
-    Dir.chdir(dataqube_ruby_folder) do
-      `gem build dataqube-ruby.gemspec -o dataqube-ruby.gem`
-      `gem install dataqube-ruby.gem --install-dir #{fluentd_folder}`
-    end
+  puts 'Installation of dataqube-ruby gem'
+  Dir.chdir(root_folder) do
+    `gem install src/dataqube-ruby/dataqube-ruby-0.0.1.gem  --install-dir vendor/bundle/ruby/3.1.0`
   end
 
-  Bundler.with_unbundled_env do
-    Dir.chdir(dataqube_plugin_folder) do
-      `bundle config set --local path #{fluentd_folder}`
-      `bundle install`
-    end
+  puts 'Installation of fluent-plugin-dataqube gem'
+  Dir.chdir(root_folder) do
+    `gem install src/fluentd-plugins/fluent-plugin-dataqube/fluent-plugin-dataqube-0.0.1.gem  --install-dir vendor/bundle/ruby/3.1.0`
   end
-  FileUtils.cp_r dataqube_plugin_folder, fluentd_plugins_folder
-  FileUtils.cp_r autoshutdown_plugin_folder, fluentd_plugins_folder
 end
 
 task :clean do
   puts 'Cleaning previous installation'.green
-  FileUtils.rm_rf fluentd_folder
-  FileUtils.rm_rf Dir.glob(File.join(dataqube_plugin_folder, 'dataqube-ruby-*.gem'))
+  FileUtils.rm_rf Dir.glob(File.join(dataqube_lib_folder, 'dataqube-ruby-*.gem'))
+  FileUtils.rm_rf Dir.glob(File.join(dataqube_plugin_folder, 'fluent-plugin-dataqube-*.gem'))
+  FileUtils.rm_rf Dir.glob(File.join(autoshutdown_plugin_folder, 'fluent-plugin-autoshutdown-*.gem'))
+  FileUtils.rm_rf dist_folder
+end
+
+task :distribute => [:clean, :build] do
+  puts 'Distributing application'.green
+  puts 'Building portable ruby'.blue
+  FileUtils.rm_rf dist_folder if File.directory?(dist_folder)
+  ruby_ship_folder = File.join dist_folder, 'tmp'
+
+  puts 'Cloning ruby_ship'
+  Git.clone RUBY_SHIP_GIT_URL, ruby_ship_folder
+
+  Dir.chdir(ruby_ship_folder) do
+    puts "Getting ruby from #{RUBY_TAR}"
+    `wget -q #{RUBY_TAR}`
+    FileUtils.rm_rf File.join ruby_ship_folder, 'bin'
+  end
+
+  puts "Compiling portable ruby with ruby_ship"
+  pid = Process.spawn("yes | ./tools/ruby_ship_build.sh #{File.basename RUBY_TAR}", chdir: ruby_ship_folder)
+  Process.wait pid
+
+  puts 'Distributing dataqube'.blue
+  puts "Copying ruby binaries"
+  FileUtils.cp_r(File.join(ruby_ship_folder, 'bin'), File.join(dist_folder, 'bin'))
+
+  puts "Copying Gemfile and .bundle directory"
+  FileUtils.cp_r(File.join(root_folder, 'Gemfile'), File.join(dist_folder))
+  FileUtils.cp_r(File.join(root_folder, 'Gemfile.lock'), File.join(dist_folder))
+  FileUtils.cp_r(File.join(root_folder, '.bundle'), File.join(dist_folder))
+  bundle_config_path = File.join(dist_folder, '.bundle', 'config')
+  File.write(bundle_config_path, 'BUNDLE_WITHOUT: "development"', mode: 'a+')
+
+  puts "Copying dataqube files"
+  FileUtils.cp_r(File.join(root_folder, 'bin', '.'), File.join(dist_folder, 'bin'))
+  FileUtils.cp_r(File.join(root_folder, 'src'), File.join(dist_folder))
+  FileUtils.cp_r(File.join(root_folder, 'vendor'), File.join(dist_folder))
+  FileUtils.cp_r(File.join(root_folder, 'examples'), File.join(dist_folder))
+
+  # Patching dataque bin
+  dataqube_path = File.join(dist_folder, 'bin', 'dataqube')
+  dataqube_content = File.read(dataqube_path)
+
+  # Perform the text replacement
+  new_dataqube_content = dataqube_content.gsub('RUBY_BIN="ruby"', 'RUBY_BIN="${dirname}/ruby_ship.sh"')
+
+  # Write the updated content back to the file
+  File.open(dataqube_path, 'w') { |file| file.write(new_dataqube_content) }
+
+  # Patching linux ruby launcher
+  ruby_path = File.join(dist_folder, 'bin', 'shipyard', 'linux_ruby.sh')
+  ruby_content = File.read(ruby_path)
+
+  # Perform the text replacement
+  new_ruby_content = ruby_content.gsub('GEM_PATH="', 'GEM_PATH="${GEM_PATH}:')
+
+  # Write the updated content back to the file
+  File.open(ruby_path, 'w') { |file| file.write(new_ruby_content) }
+
+  puts "Cleaning temp files"
+  FileUtils.rm_rf ruby_ship_folder
+
+  puts "Install dependencies"
+  bundler_bin = File.join('bin', 'ruby_ship_bundle.sh')
+  pid = Process.spawn("#{bundler_bin} install", chdir: dist_folder)
+  Process.wait pid
+
 end

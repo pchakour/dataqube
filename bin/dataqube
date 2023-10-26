@@ -1,12 +1,16 @@
 # !/bin/sh
 
 dirname="$(dirname "$0")"
-directory_path=${dirname}/.gems/ruby
+root_dir=${dirname}/..
+directory_path=${root_dir}/vendor/bundle/ruby
 ruby_version=$(find "$directory_path" -mindepth 1 -maxdepth 1 -type d -printf "%f\n")
-gem_repository=${directory_path}/${ruby_version}
-echo $gem_repository
+gem_repository=$(realpath ${directory_path}/${ruby_version})
 
-GEM_PATH=${gem_repository} ruby ${dirname}/dataqube-parser/src/main.rb $@ &
+if [ -z "${RUBY_BIN}" ]; then
+  RUBY_BIN="ruby"
+fi
+
+GEM_PATH=${gem_repository} ${RUBY_BIN} ${root_dir}/src/dataqube-parser/src/main.rb $@ &
 PID=$!
 
 handle_sigterm() {

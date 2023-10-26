@@ -94,18 +94,14 @@ config_path = Pathname.new(options[:config]).realpath.to_s
 conversion = core.convert(config_path, injection_id, rules)
 output_path = options[:output] || "#{File.dirname(__FILE__)}/../fluentd.conf"
 File.open(output_path, 'w') { |file| file.write(conversion) }
-fluentd_dir = "#{File.dirname(__FILE__)}/../fluentd"
-env = { "GEM_PATH" => fluentd_dir }
 pid = Process.spawn(
-  env,
-  "#{fluentd_dir}/bin/fluentd",
+  ENV.to_h,
+  Gem.ruby,
+  "vendor/bundle/ruby/3.1.0/gems/fluentd-1.16.2/bin/fluentd",
   "--under-supervisor",
   "-c",
   output_path,
-  "-p",
-  "#{fluentd_dir}/plugins/fluent-plugin-dataqube",
-  "-p",
-  "#{fluentd_dir}/plugins/fluent-plugin-autoshutdown"
+  chdir: "#{File.dirname(__FILE__)}/../../.."
 )
 
 Signal.trap("INT") do

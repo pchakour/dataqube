@@ -5,7 +5,7 @@ system:
 
 inputs:
   - type: tail
-    path: /home/hawk/development/dataqube/dataqube-parser/test.log
+    path: example.log
     tag: LOG
 
 outputs:

@@ -10,3 +10,5 @@ dataqube-parser/fluentd.conf
 .temp
 .cache
 .gems
+vendor
+dist
