@@ -37,17 +37,17 @@ task :install => [:clean, :build] do
   puts 'Installation of gem'.blue
   puts 'Installation of fluent-plugin-autoshutdown gem'
   Dir.chdir(root_folder) do
-    `gem install src/fluentd-plugins/fluent-plugin-autoshutdown/fluent-plugin-autoshutdown-0.0.1.gem --install-dir vendor/bundle/ruby/3.1.0`
+    `gem install src/fluentd-plugins/fluent-plugin-autoshutdown/fluent-plugin-autoshutdown-0.0.1.gem --install-dir vendor/bundle/ruby/3.1.0 --no-doc --no-user-install`
   end
 
   puts 'Installation of dataqube-ruby gem'
   Dir.chdir(root_folder) do
-    `gem install src/dataqube-ruby/dataqube-ruby-0.0.1.gem  --install-dir vendor/bundle/ruby/3.1.0`
+    `gem install src/dataqube-ruby/dataqube-ruby-0.0.1.gem  --install-dir vendor/bundle/ruby/3.1.0 --no-doc --no-user-install`
   end
 
   puts 'Installation of fluent-plugin-dataqube gem'
   Dir.chdir(root_folder) do
-    `gem install src/fluentd-plugins/fluent-plugin-dataqube/fluent-plugin-dataqube-0.0.1.gem  --install-dir vendor/bundle/ruby/3.1.0`
+    `gem install src/fluentd-plugins/fluent-plugin-dataqube/fluent-plugin-dataqube-0.0.1.gem  --install-dir vendor/bundle/ruby/3.1.0 --no-doc --no-user-install`
   end
 end
 
