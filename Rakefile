@@ -56,6 +56,7 @@ task :clean do
   FileUtils.rm_rf Dir.glob(File.join(dataqube_lib_folder, 'dataqube-ruby-*.gem'))
   FileUtils.rm_rf Dir.glob(File.join(dataqube_plugin_folder, 'fluent-plugin-dataqube-*.gem'))
   FileUtils.rm_rf Dir.glob(File.join(autoshutdown_plugin_folder, 'fluent-plugin-autoshutdown-*.gem'))
+  FileUtils.rm_rf File.join root_folder, 'vendor'
   FileUtils.rm_rf dist_folder
 end
 
@@ -64,16 +65,25 @@ task :distribute => [:install] do
   Dir.mkdir dist_folder
   package_name = "dataqube-#{VERSION}"
 
-  puts 'Building dataqube gem'.blue
-  Dir.chdir(root_folder) do
-    `gem build dataqube.gemspec -o #{dist_folder}/#{package_name}.gem`
-  end
-
   puts 'Building tar.gz'.blue
-  Dir.chdir(dist_folder) do
-    `gem unpack #{package_name}.gem`
-    `tar -czf #{package_name}.tar.gz #{package_name}`
-    FileUtils.rm_rf package_name
-  end
-
+  puts 'Start Redhat8 docker'
+  pid = Process.spawn(
+    'docker',
+    'run',
+    '-v',
+    "#{root_folder}:/home/dataqube/repository",
+    '--rm',
+    '-e',
+    'UID=$(id -u)',
+    '-e',
+    'GROUP=$(id -g)',
+    '-e',
+    "PACKAGE_NAME=#{package_name}",
+    '-e',
+    "DIST_FOLDER_NAME=dist",
+    'redhat/ubi8',
+    '/bin/bash',
+    '/home/dataqube/repository/docker/package_targz.sh'
+  )
+  Process.wait(pid)
 end

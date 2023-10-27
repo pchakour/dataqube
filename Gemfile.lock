@@ -1,16 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.8.4)
+    addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
     base64 (0.1.1)
-    colorize (0.8.1)
+    colorize (1.1.0)
     concurrent-ruby (1.2.2)
-    cool.io (1.7.1)
+    cool.io (1.8.0)
     dry-configurable (1.1.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
-    dry-core (1.0.0)
+    dry-core (1.0.1)
       concurrent-ruby (~> 1.0)
       zeitwerk (~> 2.6)
     dry-inflector (1.0.0)
@@ -19,7 +19,7 @@ GEM
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
-    dry-schema (1.13.2)
+    dry-schema (1.13.3)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 1.0, >= 1.0.1)
       dry-core (~> 1.0, < 2)
@@ -78,7 +78,7 @@ GEM
     msgpack (1.7.2)
     multi_json (1.15.0)
     oj (3.16.1)
-    public_suffix (5.0.1)
+    public_suffix (5.0.3)
     rake (13.0.6)
     rchardet (1.8.0)
     ruby2_keywords (0.0.5)
@@ -93,7 +93,7 @@ GEM
     webrick (1.8.1)
     yajl (0.3.4)
     yajl-ruby (1.4.3)
-    zeitwerk (2.6.10)
+    zeitwerk (2.6.12)
 
 PLATFORMS
   x86_64-linux
@@ -101,7 +101,6 @@ PLATFORMS
 DEPENDENCIES
   bundler
   colorize
-  cool.io (= 1.7.1)
   dry-schema
   elasticsearch (= 8.8.0)
   fileutils
@@ -114,4 +113,4 @@ DEPENDENCIES
   yajl
 
 BUNDLED WITH
-   2.3.5
+   2.3.26
