@@ -14,7 +14,32 @@ BIN_DIR=\\\$(dirname "\\\$0")
 RUBY=\\\${BIN_DIR}/../vendor/ruby/${RUBY_VERSION}/bin/ruby
 GEM_PATH=\\\$(realpath \\\${BIN_DIR}/../vendor/bundle/ruby/3.1.0/)
 
-GEM_PATH=\\\${GEM_PATH} \\\${RUBY} \\\${BIN_DIR}/dataqube.rb \\\$@
+GEM_PATH=\\\${GEM_PATH} \\\${RUBY} \\\${BIN_DIR}/dataqube.rb \\\$@ &
+PID=\\\$!
+
+handle_sigterm() {
+   echo \\\"SIGTERM received, exiting now\\\"
+   kill -15 \\\$PID
+   exit 143
+}
+
+handle_sigint() {
+   echo \\\"SIGINT received, exiting now\\\"
+   kill -15 \\\$PID
+   exit 130
+}
+
+handle_sigkill() {
+   echo \\\"SIGKILL received, exiting now\\\"
+   kill -15 \\\$PID
+   exit 137
+}
+
+trap handle_sigterm TERM
+trap handle_sigint INT
+trap handle_sigkill KILL
+
+wait \\\$PID
 "
 
 yum update
