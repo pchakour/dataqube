@@ -30,6 +30,7 @@ class Core
   
   def convert(config_path, injection_id, rules)
     @config.start(config_path, injection_id, rules)
+    puts @config.content.to_json
     config_validate_and_apply_defaults(@config)
     conversion = ""
     convertor_engine = FluentdConvertor.new(

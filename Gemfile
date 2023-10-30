@@ -9,6 +9,7 @@ gem 'fluent-plugin-opensearch', '1.1.4'
 
 # Others
 gem 'dry-schema'
+gem 'oga'
 gem 'oj'
 gem 'yajl'
 gem 'fluentd'

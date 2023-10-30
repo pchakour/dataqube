@@ -26,6 +26,7 @@ module Dataqube
       request['Authorization'] = "Bearer #{@token}"
 
       response = http.request(request)
+      puts response
       data = JSON.parse(response.body)
       return data
     end
@@ -46,10 +47,12 @@ module Dataqube
 
       uri = URI.parse(url)
       body = { projectId: project_id, version: version }
-      header = {'Content-Type': 'application/json'}
+      header = {'Content-Type': 'application/json', 'Authorization': "Bearer #{@token}" }
+      puts header.to_json
       response = Net::HTTP.post(uri, body.to_json, header)
+      puts response
       data = JSON.parse(response.body)
-      return data['injectionId']
+      return data
     end
 
     def end_injection(injection_id, status)
@@ -57,7 +60,7 @@ module Dataqube
 
       uri = URI.parse(url)
       body = { injectionId: injection_id, status: status }
-      header = {'Content-Type': 'application/json'}
+      header = {'Content-Type': 'application/json', 'Authorization': "Bearer #{@token}" }
       Net::HTTP.post(uri, body.to_json, header)
     end
   end

@@ -9,6 +9,9 @@ class Config
   def start(config_path, injection_id, rules)
     load(config_path)
 
+    puts "HELLO"
+    puts injection_id
+
     if !injection_id.nil?
       if !rules.nil?
         @content[:rules] = rules

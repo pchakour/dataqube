@@ -3,6 +3,17 @@ GEM
   specs:
     addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
+    ansi (1.5.0)
+    ast (2.4.2)
+    aws-eventstream (1.2.0)
+    aws-partitions (1.843.0)
+    aws-sdk-core (3.185.1)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.651.0)
+      aws-sigv4 (~> 1.5)
+      jmespath (~> 1, >= 1.6.1)
+    aws-sigv4 (1.6.1)
+      aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.1.1)
     colorize (1.1.0)
     concurrent-ruby (1.2.2)
@@ -50,6 +61,9 @@ GEM
       excon (>= 0.27.4)
       faraday (~> 2.0)
     faraday-net_http (3.0.2)
+    faraday_middleware-aws-sigv4 (1.0.1)
+      aws-sigv4 (~> 1.0)
+      faraday (>= 2.0, < 3)
     fileutils (1.7.1)
     fluent-plugin-elasticsearch (5.3.0)
       elasticsearch
@@ -57,6 +71,14 @@ GEM
       faraday (>= 2.0.0)
       faraday-excon (>= 2.0.0)
       fluentd (>= 0.14.22)
+    fluent-plugin-opensearch (1.1.4)
+      aws-sdk-core (~> 3)
+      excon
+      faraday (>= 2.0.0)
+      faraday-excon (>= 2.0.0)
+      faraday_middleware-aws-sigv4 (~> 1.0.1)
+      fluentd (>= 0.14.22)
+      opensearch-ruby
     fluent-plugin-record-modifier (2.1.1)
       fluentd (>= 1.0, < 2)
     fluentd (1.16.2)
@@ -75,12 +97,22 @@ GEM
       addressable (~> 2.8)
       rchardet (~> 1.8)
     http_parser.rb (0.8.0)
+    jmespath (1.6.2)
     msgpack (1.7.2)
     multi_json (1.15.0)
+    oga (3.4)
+      ast
+      ruby-ll (~> 2.1)
     oj (3.16.1)
+    opensearch-ruby (3.0.1)
+      faraday (>= 1.0, < 3)
+      multi_json (>= 1.0)
     public_suffix (5.0.3)
     rake (13.0.6)
     rchardet (1.8.0)
+    ruby-ll (2.1.3)
+      ansi
+      ast
     ruby2_keywords (0.0.5)
     serverengine (2.3.2)
       sigdump (~> 0.2.2)
@@ -105,9 +137,11 @@ DEPENDENCIES
   elasticsearch (= 8.8.0)
   fileutils
   fluent-plugin-elasticsearch (= 5.3.0)
+  fluent-plugin-opensearch (= 1.1.4)
   fluent-plugin-record-modifier
   fluentd
   git
+  oga
   oj
   rake
   yajl

@@ -83,18 +83,19 @@ options[:projectVersion] = 'last' if options[:projectVersion].nil?
 rules = nil
 project = nil
 injection_id = nil
+injection_jwt = nil
 
 if !options[:projectId].nil?
   # Dataqube mode
   dataqube = Dataqube::Api.new(options[:token])
   project = dataqube.get_project(options[:projectId])
-  puts project
   rules_response = dataqube.get_rules(project['rules'])
 
   if rules_response
     rules = YAML.load(rules_response['rules'])['rules']
-    injection_id = dataqube.begin_injection(project['id'], options[:projectVersion])
-    puts injection_id
+    injection = dataqube.begin_injection(project['id'], options[:projectVersion])
+    injection_id = injection['injectionId']
+    injection_jwt = injection['jwt']
   end
 end
 
