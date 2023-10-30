@@ -33,6 +33,10 @@ OptionParser.new do |opts|
   opts.on("--project-version [VERSION]", "Project version (default: last)") do |projectVersion|
     options[:projectVersion] = projectVersion
   end
+
+  opts.on("--token [TOKEN]", "Dataqube token") do |token|
+    options[:token] = token
+  end
 end.parse!
 
 core = Core.new()
@@ -69,7 +73,7 @@ def deep_delete_key(hash, key_to_delete)
 end
 
 if options[:docjson]
-  print  deep_delete_key($config_param_register.dup, :schema_raw).to_json
+  print deep_delete_key($config_param_register.dup, :schema_raw).to_json
   exit
 end
 
@@ -82,13 +86,15 @@ injection_id = nil
 
 if !options[:projectId].nil?
   # Dataqube mode
-  dataqube = Dataqube::Api.new
+  dataqube = Dataqube::Api.new(options[:token])
   project = dataqube.get_project(options[:projectId])
+  puts project
   rules_response = dataqube.get_rules(project['rules'])
 
   if rules_response
     rules = YAML.load(rules_response['rules'])['rules']
     injection_id = dataqube.begin_injection(project['id'], options[:projectVersion])
+    puts injection_id
   end
 end
 
@@ -101,6 +107,8 @@ else
   uuid = SecureRandom.uuid
   output_path =  "#{tmpdir}/fluentd-#{uuid}.conf"
 end
+
+puts conversion
 
 File.open(output_path, 'w') { |file| file.write(conversion) }
 pid = Process.spawn(

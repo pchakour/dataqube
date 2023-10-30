@@ -4,6 +4,9 @@ source "https://rubygems.org"
 gem 'elasticsearch', '8.8.0'
 gem 'fluent-plugin-elasticsearch', '5.3.0'
 
+# Opensearch 
+gem 'fluent-plugin-opensearch', '1.1.4'
+
 # Others
 gem 'dry-schema'
 gem 'oj'

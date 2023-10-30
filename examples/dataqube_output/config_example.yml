@@ -1,0 +1,18 @@
+system:
+  autostop:
+    enabled: true
+    timeout: 2
+
+inputs:
+  - type: tail
+    path: examples/simple/example.log
+    tag: LOG
+
+outputs:
+  - type: dataqube_app
+
+rules:
+  - tag: EXAMPLE_UUID
+    transform:
+      - type: uuid
+        target: my_super_id

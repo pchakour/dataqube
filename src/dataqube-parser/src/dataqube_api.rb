@@ -5,7 +5,13 @@ HOST = 'http://localhost:3001'
 
 module Dataqube
   class Api
-    def initialize()
+    private
+    attr_reader :token
+
+    public
+  
+    def initialize(token)
+      @token = token
     end
 
     def get_project(project_id)
@@ -13,9 +19,14 @@ module Dataqube
 
       params = { projectId: project_id }
       uri = URI(url + '?' + URI.encode_www_form(params))
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = (uri.scheme == 'https')
 
-      response = Net::HTTP.get(uri)
-      data = JSON.parse(response)
+      request = Net::HTTP::Get.new(uri)
+      request['Authorization'] = "Bearer #{@token}"
+
+      response = http.request(request)
+      data = JSON.parse(response.body)
       return data
     end
 

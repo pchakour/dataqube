@@ -5,7 +5,7 @@ system:
 
 inputs:
   - type: tail
-    path: examples/example.log
+    path: examples/simple/example.log
     tag: LOG
 
 outputs:

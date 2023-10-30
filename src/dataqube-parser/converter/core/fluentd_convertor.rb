@@ -76,6 +76,30 @@ class FluentdConvertor
     conversion = "\n"
     conversion << get_plugin_raw(@inputs_loader, input)
     conversion << "\n"
+    once = get_plugin_once('', @inputs_loader, input)
+    each = get_plugin_each('', @inputs_loader, input)
+
+    if once || each
+      conversion << %{
+      <filter *>
+        @type dataqube
+        init "${
+          #{once}
+        }"
+        code "${
+          #{each ? "
+          begin
+            #{each}
+          rescue => e
+            puts 'Error when excuting each code of input #{input[:type]}
+            raise e
+          end": "" }
+          record
+        }"
+      </filter>
+      }
+    end
+    conversion << "\n"
     return conversion
   end
 
@@ -83,6 +107,34 @@ class FluentdConvertor
     conversion = "\n"
     conversion << get_plugin_raw(@outputs_loader, output)
     conversion << "\n"
+
+    once = get_plugin_once('', @outputs_loader, output)
+    each = get_plugin_each('', @outputs_loader, output)
+
+    if once || each
+      conversion << %{
+      <filter *>
+        @type dataqube
+        init "${
+          #{once}
+        }"
+        code "${
+          #{each ? "
+          begin
+            #{each}
+          rescue => e
+            puts 'Error when excuting each code of output #{output[:type]}
+            raise e
+          end
+          "
+          : ""}
+          record
+        }"
+      </filter>
+      }
+      conversion << "\n"
+    end
+
     return conversion
   end
 
@@ -215,17 +267,24 @@ class FluentdConvertor
 
   def get_plugin_once(rule_tag, loader, params)
     plugin = loader.get(params[:type])
-    plugin.once(rule_tag, params)
+    if defined?(plugin.once)
+      return plugin.once(rule_tag, params)
+    end
   end
 
   def get_plugin_each(rule_tag, loader, params)
     plugin = loader.get(params[:type])
-    plugin.each(rule_tag, params)
+    if defined?(plugin.each)
+      return plugin.each(rule_tag, params)
+    end
   end
 
   def get_plugin_raw(loader, params)
     plugin = loader.get(params[:type])
-    plugin.raw(:fluentd, params)
+    if defined?(plugin.raw)
+      return plugin.raw(:fluentd, params)
+    end
+    ""
   end
 
 end
