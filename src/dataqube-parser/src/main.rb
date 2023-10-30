@@ -114,15 +114,11 @@ pid = Process.spawn(
 )
 
 Signal.trap("INT") do
-  # code à exécuter lorsque le signal INT est capturé
-  puts "Signal INT capturé. Arrêt du programme..."
   Process.kill("KILL", pid)
   exit 130
 end
 
 Signal.trap("TERM") do
-  # code à exécuter lorsque le signal INT est capturé
-  puts "Signal TERM capturé. Arrêt du programme..."
   Process.kill("KILL", pid)
   exit 143
 end
