@@ -2,14 +2,9 @@ require "date"
 
 def parse_timestamp(text, format = nil)
   if text
-    if format
+    if format && format != 'iso8601'
       return DateTime.strptime(text, format).iso8601
     end
-
-    # if format == nil || format.upcase == 'ISO8601'
-    #   real_format = "%Y-%m-%dT%H:%M:%S.%L%z" # iso8601
-
-    # end
 
     return DateTime.parse(text).iso8601
   end
