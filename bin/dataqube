@@ -14,4 +14,14 @@ pid = Process.spawn(
   *ARGV
 )
 
+Signal.trap("INT") do
+  Process.kill("INT", pid)
+  exit 130
+end
+
+Signal.trap("TERM") do
+  Process.kill("TERM", pid)
+  exit 143
+end
+
 Process.wait(pid)
