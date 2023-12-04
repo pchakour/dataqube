@@ -1,6 +1,6 @@
 {
   "name": "dataqube",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "repository": "git@github.com:pchakour/dataqube.git",
   "author": "Phares Chakour <phares-p.chakour@external.thalesgroup.com>",
