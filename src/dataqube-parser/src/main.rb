@@ -84,23 +84,33 @@ rules = nil
 project = nil
 injection_id = nil
 injection_jwt = nil
+$dataqube = nil
+
+def doneInjection(injection_id, status)
+  print "Injection #{injection_id} done\n";
+  if injection_id
+    $dataqube.end_injection(injection_id, status);
+  end
+end
 
 if !options[:projectId].nil?
   # Dataqube mode
-  dataqube = Dataqube::Api.new(options[:token])
-  project = dataqube.get_project(options[:projectId])
-  rules_response = dataqube.get_rules(project['rules'])
+  $dataqube = Dataqube::Api.new(options[:token])
+  project = $dataqube.get_project(options[:projectId])
+  rules_response = $dataqube.get_rules(project['rules'])
 
   if rules_response
     rules = YAML.load(rules_response['rules'])['rules']
-    injection = dataqube.begin_injection(project['id'], options[:projectVersion])
+    injection = $dataqube.begin_injection(project['id'], options[:projectVersion])
     injection_id = injection['injectionId']
     injection_jwt = injection['jwt']
+
+    print(injection_id, injection_jwt)
   end
 end
 
 config_path = Pathname.new(options[:config]).realpath.to_s
-conversion = core.convert(config_path, injection_id, rules)
+conversion = core.convert(config_path, injection_id, injection_jwt, rules)
 if options[:output]
   output_path = File.expand_path options[:output], Dir.pwd
 else
@@ -124,23 +134,24 @@ pid = Process.spawn(
 
 Signal.trap("INT") do
   Process.kill("KILL", pid)
+  doneInjection(injection_id, 'error')
   exit 130
 end
 
 Signal.trap("TERM") do
   Process.kill("KILL", pid)
+  doneInjection(injection_id, 'error')
   exit 143
 end
 
 Process.wait(pid)
 File.delete(output_path)
 
-print "Injection #{injection_id} done\n";
 if injection_id
   exit_status = $?
   status = 'done'
   if !exit_status.success?
     status = 'error'
   end
-  dataqube.end_injection(injection_id, status);
+  doneInjection(injection_id, status);
 end

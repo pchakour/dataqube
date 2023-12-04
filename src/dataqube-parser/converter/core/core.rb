@@ -28,8 +28,8 @@ class Core
     @assertions_loader.start()
   end
   
-  def convert(config_path, injection_id, rules)
-    @config.start(config_path, injection_id, rules)
+  def convert(config_path, injection_id, injection_jwt, rules)
+    @config.start(config_path, injection_id, injection_jwt, rules)
     puts @config.content.to_json
     config_validate_and_apply_defaults(@config)
     conversion = ""

@@ -6,11 +6,8 @@ class Config
   def initialize()
   end
 
-  def start(config_path, injection_id, rules)
+  def start(config_path, injection_id, injection_jwt, rules)
     load(config_path)
-
-    puts "HELLO"
-    puts injection_id
 
     if !injection_id.nil?
       if !rules.nil?
@@ -19,10 +16,16 @@ class Config
 
       # Todo extract this to plugin dataqube_app
       dataqube_output = @content[:outputs].find {|output| output[:type] == 'dataqube_app'}
-      dataqube_output[:type] = 'opensearch'
-      dataqube_output[:index] = "data-#{injection_id}"
-    end
+      dataqube_output[:type] = 'http'
+      dataqube_output[:endpoint] = 'http://localhost:3001/api/project/_inject'
+      dataqube_output[:headers] = {
+        "Authorization" => "Bearer #{injection_jwt}",
+        "index" => "data-#{injection_id}",
+      }
 
+    end
+    
+    @content = deep_symbolize_keys(@content)
     @content = resolveIncludes(@content, config_path)
   end
 

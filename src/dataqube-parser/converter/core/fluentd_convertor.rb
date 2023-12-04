@@ -37,6 +37,7 @@ class FluentdConvertor
     }
 
     config.content[:rules].each do |rule|
+      print("CONVERT RULE", rule)
       conversion << convert_rule(rule)
     end
 
@@ -56,6 +57,9 @@ class FluentdConvertor
     config.content[:outputs].each do |output|
       conversion << convert_output(output)
     end
+
+    print(conversion)
+    print("-------------------------------------------------------")
 
     if config.content.key?(:system) && config.content[:system].key?(:autostop) && config.content[:system][:autostop][:enabled]
       conversion << "
