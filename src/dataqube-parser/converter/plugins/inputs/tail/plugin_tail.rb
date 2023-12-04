@@ -46,6 +46,16 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
       .default('auto')
       .description("Decoding format of files. 'auto' use extension files to determine the right format")
 
+    optional(:from_encoding)
+      .filled(:string)
+      .default('ASCII-8BIT')
+      .description("Specifies the encoding of reading lines")
+
+    optional(:encoding)
+      .filled(:string)
+      .default('ASCII-8BIT')
+      .description("Encoding of output lines")
+
     optional(:pos_file)
       .filled(:string)
       .description("Record the position it last read from this file")
@@ -63,6 +73,8 @@ Paris temperatures: [59, 60, 62, 64, 58, 63, 64]
         path #{params[:path]}
         tag #{params[:tag]}
         read_from_head true
+        from_encoding #{params[:from_encoding]}
+        encoding #{params[:encoding]}
         path_key filepath
         #{params[:pos_file] ? "pos_file #{params[:pos_file]}" : ''}
         <parse>
